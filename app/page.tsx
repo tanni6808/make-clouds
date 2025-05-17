@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { Words } from "./lib/definitions";
 
 export default function Home() {
-  const [maxWords, setMaxWords] = useState<number>(50);
-  const [maxFontSize, setMaxFontSize] = useState<number>(80);
+  const [maxWords, setMaxWords] = useState<number>(100);
+  const [maxFontSize, setMaxFontSize] = useState<number>(96);
   const [minFontSize, setMinFontSize] = useState<number>(12);
   const [stopwords, setStopwords] = useState<Set<string>>(new Set());
   const [article, setArticle] = useState<string>("");
@@ -37,8 +37,21 @@ export default function Home() {
     // 將結果從出現次數多到少排列
     words.sort((a, b) => b.count - a.count);
 
+    // // 取得前100個詞；頻率較低的詞隨機抽取
+    let drawWords: Words[] = [];
+    const countThreshold = words[99].count; // 第100個詞的出現次數
+    if (words[100].count === countThreshold) {
+      const thresholdIndex = words.findIndex(
+        (word) => word.count === countThreshold
+      );
+      const wordsAboveTh = words.slice(0, thresholdIndex);
+      const wordsAtTh = words.filter((word) => word.count === countThreshold);
+      wordsAtTh.sort(() => Math.random() - 0.5);
+      drawWords = [...wordsAboveTh, ...wordsAtTh].slice(0, 100);
+    } else drawWords = words.slice(0, 100);
+
     // 輸出結果
-    setResult(words);
+    setResult(drawWords);
   };
 
   // 取得範本/停用詞
@@ -64,15 +77,6 @@ export default function Home() {
   useEffect(() => {
     if (!svgRef.current) return;
     if (!isWordCloudAppend.current) return;
-    // // 取得要用於繪製的詞
-    // const threshold = result[maxWords - 1].count;
-    // if (result[maxWords].count === threshold) {
-    //   const thIndex = result.findIndex((word) => word.count === threshold);
-    //   const wordsAboveTh = result.slice(0, thIndex);
-    //   const wordsAtTh = result.filter((word) => word.count === threshold);
-    //   wordsAtTh.sort(() => Math.random() - 0.5);
-    //   setResult([...wordsAboveTh, ...wordsAtTh]);
-    // }
 
     // 以 log(n) scale 計算每個詞的大小
     const wordCounts = result.slice(0, maxWords).map((w) => w.count);
@@ -100,7 +104,7 @@ export default function Home() {
     const placedWords: DOMRect[] = [];
 
     // 隨機性
-    const startRadius = 10 + Math.random() * 50;
+    const startRadius = 10 + Math.random() * 75;
     const angleOffset = Math.random() * Math.PI * 4;
     const firstWordSideX = Math.round(Math.random());
     const firstWordSideY = Math.round(Math.random());
@@ -178,7 +182,7 @@ export default function Home() {
     <div className="flex">
       <div className="w-1/3">
         <div className="flex">
-          <div className="w-2/4 h-80 border-2 border-blue-800 m-2 overflow-y-scroll">
+          <div className="w-full h-80 border-2 border-blue-800 m-2 overflow-y-scroll">
             {result.slice(0, maxWords).map((word, index) => (
               <div
                 key={index}
@@ -188,7 +192,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className="w-2/4 h-80 border-2 border-red-800 m-2 overflow-y-scroll">
+          {/* <div className="w-2/4 h-80 border-2 border-red-800 m-2 overflow-y-scroll">
             {result.slice(maxWords).map((word, index) => (
               <div
                 key={index}
@@ -197,7 +201,7 @@ export default function Home() {
                 <div>{`${word.word}, Counts: ${word.count}`}</div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <form
@@ -239,12 +243,12 @@ export default function Home() {
                 id=""
                 className="border-1 w-10"
                 min={10}
-                max={50}
+                max={100}
                 value={maxWords}
                 onChange={(e) => setMaxWords(Number(e.target.value))}
               />
             </div>
-            <div className="m-2">
+            {/* <div className="m-2">
               <label htmlFor="">最大字體：</label>
               <input
                 type="number"
@@ -269,7 +273,7 @@ export default function Home() {
                 value={minFontSize}
                 onChange={(e) => setMinFontSize(Number(e.target.value))}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
