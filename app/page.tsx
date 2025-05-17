@@ -22,7 +22,7 @@ export default function Home() {
       .map((segment) => segment.segment.trim());
 
     // 計算每個詞出現的次數
-    let words: Words[] = [];
+    const words: Words[] = [];
     rawWords.forEach((rawWord) => {
       if (stopwords.has(rawWord)) return; // 去除停用詞
       let inArr = false;
@@ -125,7 +125,7 @@ export default function Home() {
         centerOffsetY = firstWordSideY === 0 ? 0 : firstBbox.height;
       }
 
-      let step = 1;
+      const step = 1;
       let placed = false;
       let attempts = 0;
       const maxAttempts = 1000;
