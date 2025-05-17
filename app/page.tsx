@@ -1,103 +1,287 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect, useRef } from "react";
+import { Words } from "./lib/definitions";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [maxWords, setMaxWords] = useState<number>(50);
+  const [maxFontSize, setMaxFontSize] = useState<number>(80);
+  const [minFontSize, setMinFontSize] = useState<number>(12);
+  const [stopwords, setStopwords] = useState<Set<string>>(new Set());
+  const [article, setArticle] = useState<string>("");
+  const [result, setResult] = useState<Words[]>([]);
+  const isEffectCalledRef = useRef(false);
+  const isWordCloudAppend = useRef(false);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleSubmit = () => {
+    isWordCloudAppend.current = true;
+    const segmenter = new Intl.Segmenter("zh-tw", { granularity: "word" });
+    // 進行斷詞
+    const rawWords = Array.from(segmenter.segment(article))
+      .filter((segment) => segment.isWordLike)
+      .map((segment) => segment.segment.trim());
+
+    // 計算每個詞出現的次數
+    let words: Words[] = [];
+    rawWords.forEach((rawWord) => {
+      if (stopwords.has(rawWord)) return; // 去除停用詞
+      let inArr = false;
+      words.forEach((word) => {
+        if (rawWord === word.word) {
+          inArr = true;
+          word.count++;
+        }
+      });
+      if (!inArr) words.push({ word: rawWord, count: 1, size: 1 });
+    });
+    // 將結果從出現次數多到少排列
+    words.sort((a, b) => b.count - a.count);
+
+    // 輸出結果
+    setResult(words);
+  };
+
+  // 取得範本/停用詞
+  useEffect(() => {
+    if (!isEffectCalledRef.current) {
+      isEffectCalledRef.current = true;
+      fetch("/texts/pigeon.txt") //<================== change text
+        .then((res) => res.text())
+        .then((text) => setArticle(text));
+      fetch("/stopwords.txt")
+        .then((res) => res.text())
+        .then((text) => {
+          const words = text
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+          setStopwords(new Set(words));
+        });
+    }
+  }, []);
+
+  // 進行文字雲繪製
+  useEffect(() => {
+    if (!svgRef.current) return;
+    if (!isWordCloudAppend.current) return;
+    // // 取得要用於繪製的詞
+    // const threshold = result[maxWords - 1].count;
+    // if (result[maxWords].count === threshold) {
+    //   const thIndex = result.findIndex((word) => word.count === threshold);
+    //   const wordsAboveTh = result.slice(0, thIndex);
+    //   const wordsAtTh = result.filter((word) => word.count === threshold);
+    //   wordsAtTh.sort(() => Math.random() - 0.5);
+    //   setResult([...wordsAboveTh, ...wordsAtTh]);
+    // }
+
+    // 以 log(n) scale 計算每個詞的大小
+    const wordCounts = result.slice(0, maxWords).map((w) => w.count);
+    const logMin = Math.log(Math.min(...wordCounts));
+    const logMax = Math.log(Math.max(...wordCounts));
+    const maxFont = maxFontSize;
+    const minFont = minFontSize;
+    result.forEach((word) => {
+      const logCount = Math.log(word.count);
+      const ratio = (logCount - logMin) / (logMax - logMin);
+      word.size = minFont + ratio * (maxFont - minFont);
+    });
+
+    const svg = svgRef.current;
+    svg.innerHTML = "";
+    const xmlns = "http://www.w3.org/2000/svg";
+    const width = 600;
+    const height = 400;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const group = document.createElementNS(xmlns, "g");
+    svg.appendChild(group);
+
+    const placedWords: DOMRect[] = [];
+
+    // 隨機性
+    const startRadius = 10 + Math.random() * 50;
+    const angleOffset = Math.random() * Math.PI * 4;
+    const firstWordSideX = Math.round(Math.random());
+    const firstWordSideY = Math.round(Math.random());
+
+    result.slice(0, maxWords).forEach((word, index) => {
+      const text = document.createElementNS(xmlns, "text");
+      text.textContent = word.word;
+      text.setAttribute("font-size", word.size.toString());
+      text.setAttribute("fill", "black");
+      text.style.fontFamily = "impact";
+      text.style.fontWeight = "bold";
+      // 決定第一個字的象限
+      let centerOffsetX = 0;
+      let centerOffsetY = 0;
+      if (index === 0) {
+        text.setAttribute("x", centerX.toString());
+        text.setAttribute("y", centerY.toString());
+        group.appendChild(text);
+        const firstBbox = text.getBBox();
+        group.removeChild(text);
+        centerOffsetX = firstWordSideX === 0 ? 0 : firstBbox.width;
+        centerOffsetY = firstWordSideY === 0 ? 0 : firstBbox.height;
+      }
+
+      let step = 1;
+      let placed = false;
+      let attempts = 0;
+      const maxAttempts = 1000;
+
+      while (!placed && attempts < maxAttempts) {
+        const r = startRadius + step * attempts;
+        const a = angleOffset + 0.5 * attempts;
+        const x = centerX - centerOffsetX + r * Math.cos(a);
+        const y = centerY - centerOffsetY + r * 0.6 * Math.sin(a);
+
+        text.setAttribute("x", x.toString());
+        text.setAttribute("y", y.toString());
+
+        group.appendChild(text);
+        const bbox = text.getBBox();
+        group.removeChild(text);
+
+        const rect = new DOMRect(bbox.x, bbox.y, bbox.width, bbox.height);
+        const overlap = placedWords.some((w) => isOverlap(w, rect));
+
+        if (!overlap) {
+          group.appendChild(text);
+          placedWords.push(rect);
+          placed = true;
+        }
+        attempts++;
+      }
+
+      if (!placed) {
+        alert(`無法放置${word.word}`);
+        return;
+      }
+    });
+
+    // 縮放到最適大小
+    const bbox = group.getBBox();
+    const scaleX = width / bbox.width;
+    const scaleY = height / bbox.height;
+    const scale = Math.min(scaleX, scaleY);
+    const translateX = width / 2 - (bbox.x + bbox.width / 2) * scale;
+    const translateY = height / 2 - (bbox.y + bbox.height / 2) * scale;
+
+    group.setAttribute(
+      "transform",
+      `translate(${translateX}, ${translateY}) scale(${scale})`
+    );
+  }, [[result], maxWords, maxFontSize, minFontSize]);
+
+  return (
+    <div className="flex">
+      <div className="w-1/3">
+        <div className="flex">
+          <div className="w-2/4 h-80 border-2 border-blue-800 m-2 overflow-y-scroll">
+            {result.slice(0, maxWords).map((word, index) => (
+              <div
+                key={index}
+                className="flex p-2 justify-between hover:bg-blue-100"
+              >
+                <div>{`${word.word}, Counts: ${word.count}`}</div>
+              </div>
+            ))}
+          </div>
+          <div className="w-2/4 h-80 border-2 border-red-800 m-2 overflow-y-scroll">
+            {result.slice(maxWords).map((word, index) => (
+              <div
+                key={index}
+                className="flex p-2 justify-between hover:bg-blue-100"
+              >
+                <div>{`${word.word}, Counts: ${word.count}`}</div>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="m-2 flex flex-col"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <textarea
+            name=""
+            id=""
+            value={article}
+            onChange={(e) => setArticle(e.target.value)}
+            className="h-40 border-2 border-gray-500"
+          ></textarea>
+          <button
+            type="submit"
+            className="w-20 h-10 border-1 my-2 hover:bg-gray-300"
+          >
+            Go
+          </button>
+        </form>
+      </div>
+      <div className="">
+        <svg ref={svgRef}></svg>
+        <div className={isWordCloudAppend.current ? "" : "hidden"}>
+          <div className="m-2">
+            <label htmlFor="">關鍵詞未被正確切割？手動新增：</label>
+            <input type="text" className="border-1" />
+            <button className="border-1 hover:bg-gray-300">新增</button>
+          </div>
+          <div className="flex">
+            <div className="m-2">
+              <label htmlFor="">字詞數量：</label>
+              <input
+                type="number"
+                name=""
+                id=""
+                className="border-1 w-10"
+                min={10}
+                max={50}
+                value={maxWords}
+                onChange={(e) => setMaxWords(Number(e.target.value))}
+              />
+            </div>
+            <div className="m-2">
+              <label htmlFor="">最大字體：</label>
+              <input
+                type="number"
+                name=""
+                id=""
+                className="border-1 w-12"
+                min={minFontSize}
+                max={300}
+                value={maxFontSize}
+                onChange={(e) => setMaxFontSize(Number(e.target.value))}
+              />
+            </div>
+            <div className="m-2">
+              <label htmlFor="">最小字體：</label>
+              <input
+                type="number"
+                name=""
+                id=""
+                className="border-1 w-12"
+                min={10}
+                max={maxFontSize}
+                value={minFontSize}
+                onChange={(e) => setMinFontSize(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  );
+}
+
+function isOverlap(a: DOMRect, b: DOMRect) {
+  return !(
+    a.x + a.width < b.x ||
+    a.x > b.x + b.width ||
+    a.y + a.height < b.y ||
+    a.y > b.y + b.height
   );
 }
