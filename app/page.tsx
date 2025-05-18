@@ -369,7 +369,7 @@ function generateWordArr(
   article: string,
   stopwords: Set<string>
 ) {
-  let keywordCounts: Words[] = [];
+  const keywordCounts: Words[] = [];
   let processedArticle = article;
   if (prevArr.length !== 0) {
     prevArr.forEach((keyword) => {
