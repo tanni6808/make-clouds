@@ -26,7 +26,11 @@ body {
 }
 
 svg {
-  width: 600px;
-  height: 400px;
   border: 2px solid black;
+}
+
+text {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }

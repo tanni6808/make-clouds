@@ -1,16 +1,20 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Words } from "./lib/definitions";
+import { useRouter } from "next/navigation";
+import { useCompositionStore } from "./lib/compositionStore";
+import { Words, WordCloudData } from "./lib/definitions";
 
 export default function Home() {
   const maxFontSize = 96;
   const minFontSize = 12;
+  const router = useRouter();
   const [addWord, setAddWord] = useState<string>("");
   const [customizedWords, setCustomizedWords] = useState<string[]>([]);
   const [maxWords, setMaxWords] = useState<number>(50);
   const [stopwords, setStopwords] = useState<Set<string>>(new Set());
   const [article, setArticle] = useState<string>("");
   const [result, setResult] = useState<Words[]>([]);
+  const { setComposition } = useCompositionStore();
   const isEffectCalledRef = useRef(false);
   const isWordCloudAppend = useRef(false);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -98,7 +102,7 @@ export default function Home() {
     if (!svgRef.current) return;
     if (!isWordCloudAppend.current) return;
 
-    // 以 log(n) scale 計算每個詞的大小
+    // 以 log(n) scale 轉換出每個詞的大小
     const wordCounts = result.slice(0, maxWords).map((w) => w.count);
     const logMin = Math.log(Math.min(...wordCounts));
     const logMax = Math.log(Math.max(...wordCounts));
@@ -122,10 +126,9 @@ export default function Home() {
     svg.appendChild(group);
 
     const placedWords: DOMRect[] = [];
+    const thisWordCloud: WordCloudData[] = [];
 
     // 隨機性
-    const startRadius = 10 + Math.random() * 75;
-    const angleOffset = Math.random() * Math.PI * 4;
     const firstWordSideX = Math.round(Math.random());
     const firstWordSideY = Math.round(Math.random());
 
@@ -136,7 +139,8 @@ export default function Home() {
       text.setAttribute("fill", "black");
       text.style.fontFamily = "impact";
       text.style.fontWeight = "bold";
-      // 決定第一個字的象限
+
+      // 決定第一個字的起始象限
       let centerOffsetX = 0;
       let centerOffsetY = 0;
       if (index === 0) {
@@ -149,12 +153,15 @@ export default function Home() {
         centerOffsetY = firstWordSideY === 0 ? 0 : firstBbox.height;
       }
 
+      // 隨機選位
       const step = 1;
       let placed = false;
       let attempts = 0;
       const maxAttempts = 1000;
 
       while (!placed && attempts < maxAttempts) {
+        const startRadius = 10 + Math.random() * 200;
+        const angleOffset = Math.random() * Math.PI * 2;
         const r = startRadius + step * attempts;
         const a = angleOffset + 0.5 * attempts;
         const x = centerX - centerOffsetX + r * Math.cos(a);
@@ -174,15 +181,32 @@ export default function Home() {
           group.appendChild(text);
           placedWords.push(rect);
           placed = true;
+          thisWordCloud.push({
+            text: word.word,
+            x: x,
+            y: y,
+            fontSize: word.size,
+          });
         }
         attempts++;
       }
 
       if (!placed) {
-        alert(`無法放置${word.word}`);
+        text.setAttribute("x", "0");
+        text.setAttribute("y", "0");
+        group.appendChild(text);
+        thisWordCloud.push({
+          text: word.word,
+          x: 0,
+          y: 0,
+          fontSize: word.size,
+        });
+        alert(`${word.word}找不到合適的位置，將放置於左上角。`);
         return;
       }
     });
+
+    setComposition(thisWordCloud);
 
     // 縮放到最適大小
     const bbox = group.getBBox();
@@ -340,14 +364,20 @@ export default function Home() {
         </div>
       </div>
       <div className="m-2">
-        <svg ref={svgRef}></svg>
+        <div className="">預覽：</div>
+        <svg ref={svgRef} width={600} height={400}></svg>
         <div className={isWordCloudAppend.current ? "flex" : "hidden"}>
-          <div className="">下載：</div>
           <button
             onClick={handleDlSvg}
             className="border-1 hover:bg-gray-300 px-1"
           >
-            SVG
+            下載 (SVG)
+          </button>
+          <button
+            className="border-1 hover:bg-gray-300 px-1"
+            onClick={() => router.push("/canvas")}
+          >
+            進階調整
           </button>
         </div>
       </div>
@@ -372,17 +402,19 @@ function generateWordArr(
   const keywordCounts: Words[] = [];
   let processedArticle = article;
   if (prevArr.length !== 0) {
-    prevArr.forEach((keyword) => {
+    prevArr.forEach((keyword, i) => {
       const regex = new RegExp(keyword, "gi");
       const matches = processedArticle.match(regex);
 
       if (matches) {
         keywordCounts.push({ word: keyword, count: matches.length, size: 1 });
         processedArticle = processedArticle.replaceAll(regex, " ");
-      } else
+      } else {
+        prevArr.splice(i);
         return alert(
           `找不到「${keyword}」。如果您確定文章中有這個詞，請檢查是否曾新增了過於簡短或重疊的自訂詞，導致詞彙被切割。建議刪除可能衝突的自訂詞，或直接清除所有自訂詞後再試一次。`
         );
+      }
     });
   }
 

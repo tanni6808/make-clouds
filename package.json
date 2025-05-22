@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "next": "15.3.2",
-    "nodejieba": "^3.4.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
