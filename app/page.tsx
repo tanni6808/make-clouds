@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCompositionStore } from "./lib/compositionStore";
-import { Words, WordCloudData } from "./lib/definitions";
+import { Words, WordCloudData, ColorScheme } from "./lib/definitions";
 
 export default function Home() {
   const maxFontSize = 96;
@@ -14,11 +14,42 @@ export default function Home() {
   const [stopwords, setStopwords] = useState<Set<string>>(new Set());
   const [article, setArticle] = useState<string>("");
   const [result, setResult] = useState<Words[]>([]);
+  const [baseColor, setBaseColor] = useState<string>("#000000");
+  const [schemeMode, setSchemeMode] = useState<string>("none");
+  const [colorSchemes, setColorSchemes] = useState<ColorScheme[]>([]);
+  const [shouldApplyScheme, setShouldApplyScheme] = useState(false);
   const { setComposition } = useCompositionStore();
   const isEffectCalledRef = useRef(false);
   const isWordCloudAppend = useRef(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
+  // Fetch Color Scheme
+  async function getColorScheme() {
+    const schemeAndCount = [
+      { scheme: "monochrome", count: "3" },
+      { scheme: "analogic", count: "3" },
+      { scheme: "complement", count: "2" },
+      { scheme: "triad", count: "3" },
+      { scheme: "quad", count: "4" },
+    ];
+    const hex = baseColor.replace("#", "");
+    const results = await Promise.all(
+      schemeAndCount.map(({ scheme, count }) =>
+        fetch(
+          `https://www.thecolorapi.com/scheme?hex=${hex}&format=json&mode=${scheme}&count=${count}`
+        ).then((res) => res.json())
+      )
+    );
+    const allColorSchemes = results.map((result) => {
+      const colorArr = result.colors.map(
+        (color: { hex: { value: any } }) => color.hex.value
+      );
+      return { mode: result.mode, colors: colorArr };
+    });
+    return allColorSchemes;
+  }
+
+  // 下載SVG檔案
   const handleDlSvg = () => {
     if (!svgRef.current) return;
 
@@ -36,6 +67,7 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  // 返回修改文章
   const handleReset = () => {
     if (confirm("目前的進度將會全部被清除，是否繼續？")) {
       if (!svgRef.current) return;
@@ -45,13 +77,17 @@ export default function Home() {
       setAddWord("");
       setCustomizedWords([]);
       setResult([]);
+      setBaseColor("#000000");
+      setSchemeMode("none");
     }
   };
 
+  // 刪除自訂詞彙
   const handleDelCustomizedWord = (word: string) => {
     setCustomizedWords((prev) => prev.filter((w) => w !== word));
   };
 
+  // 輸入文章
   const handleSubmit = () => {
     if (!article.trim()) return alert("請輸入文章!");
     isWordCloudAppend.current = true;
@@ -60,6 +96,7 @@ export default function Home() {
     setResult(drawWords);
   };
 
+  // 新增自訂詞彙
   const handleAddCustomizedWord = () => {
     const clearWord = addWord.trim();
     if (!clearWord) return alert("請輸入詞彙。");
@@ -136,7 +173,7 @@ export default function Home() {
       const text = document.createElementNS(xmlns, "text");
       text.textContent = word.word;
       text.setAttribute("font-size", word.size.toString());
-      text.setAttribute("fill", "black");
+      text.setAttribute("fill", baseColor);
       text.style.fontFamily = "impact";
       text.style.fontWeight = "bold";
 
@@ -221,6 +258,45 @@ export default function Home() {
       `translate(${translateX}, ${translateY}) scale(${scale})`
     );
   }, [result, maxWords]);
+
+  // 改顏色
+  useEffect(() => {
+    if (!svgRef.current) return;
+
+    const textEls = svgRef.current.querySelectorAll("text");
+    if (schemeMode === "none") {
+      textEls.forEach((textEl) => {
+        textEl.setAttribute("fill", baseColor);
+      });
+    }
+    const fetchColorScheme = async () => {
+      const schemes = await getColorScheme();
+      setColorSchemes(schemes);
+      setShouldApplyScheme(true);
+    };
+    fetchColorScheme();
+  }, [baseColor, schemeMode, result, maxWords]);
+
+  useEffect(() => {
+    if (!shouldApplyScheme) return;
+    const scheme = colorSchemes.find((s) => s.mode === schemeMode);
+    if (!scheme) return;
+    if (!svgRef.current) return;
+
+    const textEls = svgRef.current.querySelectorAll("text");
+
+    textEls.forEach((textEl) => {
+      const thisColors = colorSchemes.find(
+        (scheme) => scheme.mode === schemeMode
+      )?.colors;
+      if (thisColors) {
+        const randomColor =
+          thisColors[Math.floor(Math.random() * thisColors.length)];
+        textEl.setAttribute("fill", randomColor);
+      }
+    });
+    setShouldApplyScheme(false);
+  }, [colorSchemes, shouldApplyScheme]);
 
   return (
     <div className="flex">
@@ -359,6 +435,117 @@ export default function Home() {
               >
                 +10
               </button>
+            </div>
+          </div>
+          <form className="flex item-center m-2">
+            <label htmlFor="">字詞顏色：</label>
+            <input
+              type="color"
+              value={baseColor}
+              onChange={(e) => setBaseColor(e.target.value)}
+            />
+            <select
+              value={schemeMode}
+              onChange={(e) => setSchemeMode(e.target.value)}
+            >
+              <option value="none">單一顏色</option>
+              <option value="monochrome">單色調</option>
+              <option value="analogic">相似色</option>
+              <option value="complement">互補色</option>
+              <option value="triad">三等分</option>
+              <option value="quad">矩形</option>
+            </select>
+          </form>
+          <div className="m-2">
+            <div className="flex">
+              <div className="">單色調</div>
+              <div className="flex">
+                {colorSchemes
+                  .find((scheme) => scheme.mode === "monochrome")
+                  ?.colors.map((color, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: color,
+                        height: "25px",
+                        width: "25px",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  ))}
+              </div>
+            </div>
+            <div className="flex">
+              <div className="">相似色</div>
+              <div className="flex">
+                {colorSchemes
+                  .find((scheme) => scheme.mode === "analogic")
+                  ?.colors.map((color, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: color,
+                        height: "25px",
+                        width: "25px",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  ))}
+              </div>
+            </div>
+            <div className="flex">
+              <div className="">互補色</div>
+              <div className="flex">
+                {colorSchemes
+                  .find((scheme) => scheme.mode === "complement")
+                  ?.colors.map((color, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: color,
+                        height: "25px",
+                        width: "25px",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  ))}
+              </div>
+            </div>
+            <div className="flex">
+              <div className="">三等分</div>
+              <div className="flex">
+                {colorSchemes
+                  .find((scheme) => scheme.mode === "triad")
+                  ?.colors.map((color, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: color,
+                        height: "25px",
+                        width: "25px",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  ))}
+              </div>
+            </div>
+            <div className="flex">
+              <div className="">四邊形</div>
+              <div className="flex">
+                {colorSchemes
+                  .find((scheme) => scheme.mode === "quad")
+                  ?.colors.map((color, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: color,
+                        height: "25px",
+                        width: "25px",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>

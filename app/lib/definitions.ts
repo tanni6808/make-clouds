@@ -27,3 +27,8 @@ export type CanvasTransform = {
   translateX: number;
   translateY: number;
 };
+
+export type ColorScheme = {
+  mode: string;
+  colors: string[];
+};
