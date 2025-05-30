@@ -20,7 +20,7 @@ export interface CanvasRef {
 
 interface CanvasProps {}
 
-function Canvas(props: CanvasProps, ref: React.Ref<CanvasRef>) {
+function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   const pathname = usePathname();
   const shouldGenerate = pathname === "/composition";
 
