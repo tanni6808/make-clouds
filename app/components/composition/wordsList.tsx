@@ -9,7 +9,6 @@ export default function WordsList() {
     restoreWord,
     removeCustomWord,
     selectionCount,
-    getSelectedWords,
   } = useWordCloudStore();
   const handleRemoveCustomWord = (word: string) => {
     removeCustomWord(word);

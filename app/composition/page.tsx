@@ -11,13 +11,8 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CompositionPage() {
-  const {
-    article,
-    customWords,
-    composition,
-    setSegmentedWords,
-    setFinalComposition,
-  } = useWordCloudStore();
+  const { article, customWords, composition, setSegmentedWords } =
+    useWordCloudStore();
   const [stopwords, setStopwords] = useState<Set<string>>(new Set());
   const router = useRouter();
   const canvasRef = useRef<CanvasRef>(null);
@@ -27,7 +22,6 @@ export default function CompositionPage() {
   };
 
   const handleGoNextStep = () => {
-    setFinalComposition(composition);
     router.push("/style");
   };
 

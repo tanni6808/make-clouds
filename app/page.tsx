@@ -29,10 +29,17 @@ export default function Home() {
         onChange={(e) => setArticle(e.target.value)}
       ></textarea>
       <div className="flex justify-center gap-6">
-        <Button style="hollow" onClick={handleLoadExample} type="button">
+        <Button
+          style="hollow"
+          onClick={handleLoadExample}
+          type="button"
+          className="px-8 "
+        >
           載入範例文章
         </Button>
-        <Button style="solid">開始製作</Button>
+        <Button style="solid" className="px-8 ">
+          開始製作
+        </Button>
       </div>
     </form>
   );

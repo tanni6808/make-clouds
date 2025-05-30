@@ -14,7 +14,7 @@ function IndexHeader() {
         <div className="text-5xl mb-6">製雲</div>
         <div className="text-2xl">三個步驟，</div>
         <div className="text-2xl mb-4">製作精美的繁體中文文字雲。</div>
-        <Button style="solid" onClick={handleStart}>
+        <Button style="solid" onClick={handleStart} className="px-8 ">
           馬上開始
         </Button>
       </div>

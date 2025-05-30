@@ -53,6 +53,12 @@ export type WordStyle = {
   fontFamily: string;
 };
 
+export type Transform = {
+  scale: number;
+  translateX: number;
+  translateY: number;
+};
+
 export type CanvasProps = {
   words: WordComposition[];
   // hoveredIndex: number | null;

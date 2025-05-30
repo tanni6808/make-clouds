@@ -105,13 +105,13 @@ function isOverlap(a: DOMRect, b: DOMRect) {
 
 export function generateWordCloud(
   wordList: SegmentedWord[],
-  svgEl: SVGSVGElement,
-  groupEl: SVGGElement
+  svgEl: SVGSVGElement
+  // groupEl: SVGGElement
 ): WordComposition[] {
   const drawWords = calcFontSize(wordList);
   const svg = svgEl;
-  const group = groupEl;
-  group.innerHTML = "";
+  // const group = groupEl;
+  // group.innerHTML = "";
   const xmlns = "http://www.w3.org/2000/svg";
   const { width, height } = svg.getBoundingClientRect();
   const centerX = width / 2;
@@ -166,7 +166,7 @@ export function generateWordCloud(
       const overlap = placedWords.some((w) => isOverlap(w, rect));
 
       if (!overlap) {
-        group.appendChild(text);
+        // group.appendChild(text);
         placedWords.push(rect);
         placed = true;
         result.push({
@@ -182,7 +182,7 @@ export function generateWordCloud(
     if (!placed) {
       text.setAttribute("x", "0");
       text.setAttribute("y", "0");
-      group.appendChild(text);
+      // group.appendChild(text);
       result.push({
         text: word.text,
         x: 0,

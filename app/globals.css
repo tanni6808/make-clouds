@@ -4,7 +4,8 @@
   --background: #f5f3ef;
   --primary-light: #807878;
   --primary-dark: #545454;
-  --gray-light: #f1f1f1;
+  --gray-light: #ebebeb;
+  --gray-md: #d6d6d6;
   --gray-dark: #bcbcbc;
   --red: #b83e3e;
 }
@@ -14,6 +15,7 @@
   --color-primary-light: var(--primary-light);
   --color-primary-dark: var(--primary-dark);
   --color-gray-light: var(--gray-light);
+  --color-gray-md: var(--gray-md);
   --color-gray-dark: var(--gray-dark);
   --color-red: var(--red);
 }
