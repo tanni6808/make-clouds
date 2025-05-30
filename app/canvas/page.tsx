@@ -126,9 +126,9 @@ export default function Canvas() {
   };
 
   const handleMouseUp = () => {
-    if (dragState.index !== null) {
-      // for undo/redo
-    }
+    // if (dragState.index !== null) {
+    //   // for undo/redo
+    // }
     setDragState({ index: null, offsetX: 0, offsetY: 0 });
     setIsPanning(false);
   };

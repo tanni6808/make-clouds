@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { WordCloudData, CompositionStore } from "./definitions";
+import type { WordCloudData, CompositionStore, Words } from "./definitions";
 
 export const useCompositionStore = create<CompositionStore>((set) => ({
   composition: [],
