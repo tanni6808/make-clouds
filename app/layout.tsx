@@ -8,6 +8,7 @@ import Footer from "./components/footer";
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-noto-sans",
   weight: "700",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
