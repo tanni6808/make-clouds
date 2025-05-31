@@ -48,9 +48,12 @@ export type WordComposition = {
   rotate?: number;
 };
 
-export type WordStyle = {
-  color?: string;
+export type FontStyle = {
   fontFamily: string;
+  fontWeight: string | number;
+  italic?: boolean;
+  underline?: boolean;
+  shadow?: boolean;
 };
 
 export type Transform = {

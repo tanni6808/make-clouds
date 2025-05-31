@@ -10,7 +10,7 @@ export default function ColorPanel() {
     <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
       <div className="text-center mb-[10px]">顏色</div>
       <div className="flex flex-col gap-3">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <div className="bg-gray-light p-2 rounded-lg">
             <input type="color" className="w-[20px] h-[24px]" />
           </div>
@@ -29,7 +29,7 @@ export default function ColorPanel() {
             className="w-[100%]"
           ></CustomDropdown>
         </div>
-        {/* <div className="flex gap-2 bg-gray-light p-2 rounded-lg">
+        <div className="flex gap-2 bg-gray-light p-2 rounded-lg">
           <button className="w-[30px] h-[30px] rounded-[50%] bg-gray-md">
             十
           </button>
@@ -45,7 +45,7 @@ export default function ColorPanel() {
           <button className="w-[30px] h-[30px] rounded-[50%] bg-gray-md">
             十
           </button>
-        </div> */}
+        </div>
         <Button style="hollow">重新隨機上色</Button>
       </div>
     </div>

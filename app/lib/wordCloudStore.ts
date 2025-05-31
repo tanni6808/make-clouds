@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { SegmentedWord, WordComposition, WordStyle } from "./definitions";
+import { SegmentedWord, WordComposition, FontStyle } from "./definitions";
 
 type WordCloudState = {
   // 階段一: 輸入文章
@@ -29,9 +29,12 @@ type WordCloudState = {
   updateWordPosition: (text: string, x: number, y: number) => void;
 
   // 階段三: 字型、顏色
-  styleMap: Record<string, WordStyle>;
-  setWordStyle: (text: string, style: WordStyle) => void;
-  setAllWordStyles: (styles: Record<string, WordStyle>) => void;
+  fontStyleMap: Record<string, FontStyle>;
+  setFontStyle: (text: string, style: FontStyle) => void;
+  setAllFontStyles: (styles: Record<string, FontStyle>) => void;
+
+  defaultFontStyle: FontStyle;
+  setDefaultFontStyle: (fontStyle: FontStyle) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -101,9 +104,18 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     });
   },
 
-  styleMap: {},
-  setWordStyle: (text, style) => {
-    set({ styleMap: { ...get().styleMap, [text]: style } });
+  fontStyleMap: {},
+  setFontStyle: (text, style) => {
+    set({ fontStyleMap: { ...get().fontStyleMap, [text]: style } });
   },
-  setAllWordStyles: (styles) => set({ styleMap: styles }),
+  setAllFontStyles: (styles) => set({ fontStyleMap: styles }),
+
+  defaultFontStyle: {
+    fontFamily: "Noto sans TC",
+    fontWeight: "bold",
+    italic: false,
+    underline: false,
+    shadow: false,
+  },
+  setDefaultFontStyle: (style) => set({ defaultFontStyle: style }),
 }));

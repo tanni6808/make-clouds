@@ -46,6 +46,10 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   const svgRef = useRef<SVGSVGElement>(null);
   const groupRef = useRef<SVGGElement>(null);
 
+  // Status for styles
+  const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
+  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
+
   // Word cloud store
   const {
     segmentedWords,
@@ -263,25 +267,35 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
           ref={groupRef}
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
         >
-          {composition.map((word, index) => (
-            <text
-              key={index}
-              x={word.x}
-              y={word.y}
-              fontSize={word.fontSize}
-              fontFamily="Noto Sans TC"
-              fill="#545454"
-              fontWeight="bold"
-              onMouseDown={(e) => {
-                handleTextMouseDown(e, index);
-              }}
-              className={`${
-                dragState.index ? "cursor-grabbing" : "cursor-grab"
-              }`}
-            >
-              {word.text}
-            </text>
-          ))}
+          {composition.map((word, index) => {
+            const fontStyle = fontStyleMap[word.text] ?? defaultFontStyle;
+            return (
+              <text
+                key={index}
+                x={word.x}
+                y={word.y}
+                fontSize={word.fontSize}
+                fontFamily={fontStyle.fontFamily}
+                fontStyle={fontStyle.italic ? "italic" : "normal"}
+                style={{
+                  textShadow: fontStyle.shadow
+                    ? "2px 2px 5px rgba(0,0,0,0.5)"
+                    : "",
+                }}
+                textDecoration={fontStyle.underline ? "underline" : "none"}
+                fill="#545454"
+                fontWeight={fontStyle.fontWeight}
+                onMouseDown={(e) => {
+                  handleTextMouseDown(e, index);
+                }}
+                className={`${
+                  dragState.index ? "cursor-grabbing" : "cursor-grab"
+                }`}
+              >
+                {word.text}
+              </text>
+            );
+          })}
         </g>
       </svg>
       <Button
@@ -289,7 +303,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
         className="absolute z-10 right-[10px] bottom-[10px] px-4 "
         onClick={() => resetCanvasPosition(true)}
       >
-        重置畫布
+        重置畫布縮放
       </Button>
     </div>
   );
