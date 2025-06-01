@@ -1,6 +1,6 @@
 "use client";
 import Button from "../components/button";
-import { CustomDropdown } from "../components/dropdown";
+import { CustomDropdown, FontDropdown } from "../components/dropdown";
 import Canvas, { CanvasRef } from "../components/canvas";
 // import FontPanel from "../components/style/fontPanel";
 import ColorPanel from "../components/style/colorPanel";
@@ -8,41 +8,8 @@ import ColorPanel from "../components/style/colorPanel";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 
 import { useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { FontStyle } from "../lib/definitions";
-
-import {
-  Noto_Sans_TC,
-  Noto_Serif_TC,
-  Chocolate_Classical_Sans,
-  LXGW_WenKai_TC,
-  Cactus_Classical_Serif,
-} from "next/font/google";
-
-const notoSansTC = Noto_Sans_TC({
-  weight: ["100", "300", "500", "700", "900"],
-  subsets: ["latin"],
-});
-
-const notoSerifTC = Noto_Serif_TC({
-  weight: ["300", "600", "900"],
-  subsets: ["latin"],
-});
-
-const chocoClassicalSans = Chocolate_Classical_Sans({
-  weight: ["400"],
-  subsets: ["latin"],
-});
-
-const lxgwWKTC = LXGW_WenKai_TC({
-  weight: ["300", "400", "700"],
-  subsets: ["latin"],
-});
-
-const cactusClassicalSerif = Cactus_Classical_Serif({
-  weight: ["400"],
-  subsets: ["latin"],
-});
 
 export default function StylePage() {
   const router = useRouter();
@@ -56,6 +23,17 @@ export default function StylePage() {
 
   const handleChange = (key: keyof FontStyle, value: any) => {
     setDefaultFontStyle({ ...defaultFontStyle, [key]: value });
+  };
+  const handleFontChange = (value: string) => {
+    const lastSpace = value.lastIndexOf(" ");
+    const fontFamily = value.slice(0, lastSpace);
+    const fontWeight = value.slice(lastSpace + 1);
+
+    setDefaultFontStyle({
+      ...defaultFontStyle,
+      fontFamily,
+      fontWeight,
+    });
   };
   const handleDownloadSVG = () => {
     const words = canvasRef.current?.getWordComposition();
@@ -168,18 +146,26 @@ export default function StylePage() {
         <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
           <div className="text-center mb-[10px]">字型</div>
           <div className="flex flex-col gap-2">
-            <CustomDropdown
-              value={defaultFontStyle.fontFamily}
-              onChange={(val) => handleChange("fontFamily", val)}
+            <FontDropdown
+              value={`${defaultFontStyle.fontFamily} ${defaultFontStyle.fontWeight}`}
+              onChange={(val) => handleFontChange(val)}
               options={[
-                { label: "思源黑體", value: "Noto Sans TC" },
-                { label: "思源宋體", value: "Noto Serif TC" },
-                { label: "朱古力黑體", value: "Chocolate Classical Sans" },
-                { label: "霞鶩文楷", value: "LXGW WenKai TC" },
-                { label: "仙人掌明體", value: "Cactus Classical Serif" },
+                { label: "思源黑體 Light", value: "Noto Sans TC 300" },
+                { label: "思源黑體 Regular", value: "Noto Sans TC 400" },
+                { label: "思源黑體 Bold", value: "Noto Sans TC 700" },
+                { label: "思源黑體 Black", value: "Noto Sans TC 900" },
+                { label: "思源宋體 Light", value: "Noto Serif TC 300" },
+                {
+                  label: "朱古力黑體 Regular",
+                  value: "Chocolate Classical Sans 400",
+                },
+                { label: "霞鶩文楷 Regular", value: "LXGW WenKai TC 400" },
+                {
+                  label: "仙人掌明體 Regular",
+                  value: "Cactus Classical Serif 400",
+                },
               ]}
-              className="w-[100%]"
-            ></CustomDropdown>
+            ></FontDropdown>
             <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
               <button
                 className={`text-center rounded-lg h-[40px] text-shadow-lg ${
