@@ -28,11 +28,6 @@ export type DragState = {
   offsetY: number;
 };
 
-export type ColorScheme = {
-  mode: string;
-  colors: string[];
-};
-
 ///////////// NEW STRUCTURE
 export type SegmentedWord = {
   text: string;
@@ -54,8 +49,17 @@ export type FontStyle = {
   fontFamily: string;
   fontWeight: string | number;
   italic?: boolean;
-  underline?: boolean;
   shadow?: boolean;
+};
+
+export type TextColor = {
+  color: string;
+  isCustom: boolean;
+};
+
+export type ColorScheme = {
+  mode: string;
+  colors: string[];
 };
 
 export type Transform = {

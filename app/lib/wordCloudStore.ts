@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { SegmentedWord, WordComposition, FontStyle } from "./definitions";
+import {
+  SegmentedWord,
+  WordComposition,
+  FontStyle,
+  TextColor,
+  ColorScheme,
+} from "./definitions";
 
 type WordCloudState = {
   // 階段一: 輸入文章
@@ -32,9 +38,18 @@ type WordCloudState = {
   fontStyleMap: Record<string, FontStyle>;
   setFontStyle: (text: string, style: FontStyle) => void;
   // setAllFontStyles: (styles: Record<string, FontStyle>) => void;
-
   globalFontStyle: FontStyle;
   setGlobalFontStyle: (fontStyle: FontStyle) => void;
+
+  textColorMap: Record<string, TextColor>;
+  setTextColor: (text: string, color: TextColor) => void;
+  baseTextColor: string;
+  setBaseTextColor: (color: string) => void;
+  schemeMode: string;
+  setSchemeMode: (scheme: string) => void;
+  colorSchemes: ColorScheme[];
+  setColorSchemes: (schemes: ColorScheme[]) => void;
+  setRandomColorsFromScheme: () => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -117,4 +132,41 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     shadow: false,
   },
   setGlobalFontStyle: (style) => set({ globalFontStyle: style }),
+
+  textColorMap: {},
+  setTextColor: (text, color) => {
+    set({ textColorMap: { ...get().textColorMap, [text]: color } });
+  },
+  baseTextColor: "#545454",
+  setBaseTextColor: (color) => set({ baseTextColor: color }),
+  schemeMode: "none",
+  setSchemeMode: (scheme) => set({ schemeMode: scheme }),
+  setColorScheme: (mode: string) => set({ schemeMode: mode }),
+  colorSchemes: [],
+  setColorSchemes: (schemes: ColorScheme[]) => set({ colorSchemes: schemes }),
+  setRandomColorsFromScheme: () => {
+    const { schemeMode, colorSchemes, getSelectedWords } = get();
+
+    if (schemeMode === "none") {
+      const map: Record<string, TextColor> = {};
+      getSelectedWords().forEach((word) => {
+        map[word.text] = { color: get().baseTextColor, isCustom: false };
+      });
+      set({ textColorMap: map });
+      return;
+    }
+
+    const scheme = colorSchemes.find((s) => s.mode === schemeMode);
+    if (!scheme) return;
+
+    const words = getSelectedWords();
+    const map: Record<string, TextColor> = {};
+    words.forEach((word) => {
+      const randomColor =
+        scheme.colors[Math.floor(Math.random() * scheme.colors.length)];
+      map[word.text] = { color: randomColor, isCustom: false };
+    });
+
+    set({ textColorMap: map });
+  },
 }));

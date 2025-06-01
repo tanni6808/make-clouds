@@ -11,6 +11,7 @@ import { Transform, WordComposition } from "../lib/definitions";
 import Button from "./button";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 import { generateWordCloud } from "../lib/wordCloudMethod";
+import { text } from "stream/consumers";
 
 export interface CanvasRef {
   regenerate: () => void;
@@ -49,6 +50,10 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   // Status for styles
   const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
+
+  // Status for colors
+  const textColorMap = useWordCloudStore((s) => s.textColorMap);
+  const baseTextColor = useWordCloudStore((s) => s.baseTextColor);
 
   // Word cloud store
   const {
@@ -282,7 +287,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                     ? "2px 2px 5px rgba(0,0,0,0.5)"
                     : "",
                 }}
-                fill="#545454"
+                fill={textColorMap[word.text]?.color || baseTextColor}
                 onMouseDown={(e) => {
                   handleTextMouseDown(e, index);
                 }}

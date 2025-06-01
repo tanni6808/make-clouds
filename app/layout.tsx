@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_TC, Chocolate_Classical_Sans } from "next/font/google";
+import { Noto_Sans_TC } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
 import Workspace from "./components/workspace";

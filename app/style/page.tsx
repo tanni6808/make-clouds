@@ -15,7 +15,16 @@ export default function StylePage() {
   const router = useRouter();
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
   const setGlobalFontStyle = useWordCloudStore((s) => s.setGlobalFontStyle);
-  const { composition } = useWordCloudStore();
+  const {
+    composition,
+    baseTextColor,
+    textColorMap,
+    schemeMode,
+    colorSchemes,
+    setBaseTextColor,
+    setColorSchemes,
+    setRandomColorsFromScheme,
+  } = useWordCloudStore();
   const canvasRef = useRef<CanvasRef>(null);
   const handleRegenerateWordCloud = () => {
     canvasRef.current?.regenerate();
@@ -67,7 +76,7 @@ export default function StylePage() {
               font-family="${globalFontStyle.fontFamily}"
               font-weight="${globalFontStyle.fontWeight}"
               font-style="${globalFontStyle.italic ? "italic" : "normal"}"
-              fill="#545454"
+              fill="${textColorMap[word.text].color || "#545454"}"
               filter="${globalFontStyle.shadow ? "url(#text-shadow)" : ""}"
             >
               ${word.text}
@@ -113,8 +122,6 @@ export default function StylePage() {
     ctx.fillStyle = "rgb(255 255 255 / 0%)"; // "rgb(255 255 255)";
     ctx.fillRect(0, 0, width, height);
 
-    ctx.fillStyle = "#545454";
-
     words.forEach((word) => {
       if (globalFontStyle.shadow) {
         ctx.shadowColor = "rgba(0,0,0,0.5)";
@@ -125,6 +132,7 @@ export default function StylePage() {
       ctx.font = `${globalFontStyle.italic ? "italic" : ""} ${
         globalFontStyle.fontWeight
       } ${word.fontSize}px ${globalFontStyle.fontFamily}`;
+      ctx.fillStyle = textColorMap[word.text]?.color || "#545454";
       ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
     });
 
@@ -147,16 +155,54 @@ export default function StylePage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (schemeMode === "none") {
+      setColorSchemes([]);
+      setRandomColorsFromScheme();
+      return;
+    }
+
+    const fetchColorSchemes = async () => {
+      const schemeAndCount = [
+        { scheme: "monochrome", count: "3" },
+        { scheme: "analogic", count: "3" },
+        { scheme: "complement", count: "2" },
+        { scheme: "triad", count: "3" },
+        { scheme: "quad", count: "4" },
+      ];
+      const hex = baseTextColor.replace("#", "");
+      const results = await Promise.all(
+        schemeAndCount.map(({ scheme, count }) =>
+          fetch(
+            `https://www.thecolorapi.com/scheme?hex=${hex}&format=json&mode=${scheme}&count=${count}`
+          ).then((res) => res.json())
+        )
+      );
+
+      const allColorSchemes = results.map((result) => ({
+        mode: result.mode,
+        colors: result.colors.map(
+          (color: { hex: { value: any } }) => color.hex.value
+        ),
+      }));
+
+      setColorSchemes(allColorSchemes);
+      setRandomColorsFromScheme(); // 更新詞彙顏色
+    };
+
+    fetchColorSchemes();
+  }, [baseTextColor, schemeMode]);
+
   return (
     <div className="grid grid-cols-4 gap-8 h-[600px]">
       <div className="col-start-1 col-end-4">
         <Canvas ref={canvasRef} />
       </div>
       <div className="grid grid-rows-[auto_auto_auto_1fr_100px] gap-3">
+        <div className="text-center">整體樣式編輯</div>
         <Button style="hollow" onClick={handleRegenerateWordCloud}>
           重新隨機排列詞彙
         </Button>
-        <div className="text-center">整體樣式編輯</div>
         {/* <WordsList></WordsList> */}
         <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
           <div className="text-center mb-[10px]">字型</div>

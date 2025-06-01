@@ -108,7 +108,9 @@ export function CustomDropdown({
           {options.map((option) => (
             <li
               key={option.value}
-              className="px-4 py-2 hover:bg-gray-md cursor-pointer"
+              className={`px-4 py-2 hover:bg-gray-md cursor-pointer ${
+                option.value === selected?.value ? "bg-gray-md" : ""
+              }`}
               onClick={() => {
                 onChange(option.value);
                 setOpen(false);
