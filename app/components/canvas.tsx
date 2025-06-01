@@ -48,7 +48,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
 
   // Status for styles
   const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
-  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
+  const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
 
   // Word cloud store
   const {
@@ -267,7 +267,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
         >
           {composition.map((word, index) => {
-            const fontStyle = fontStyleMap[word.text] ?? defaultFontStyle;
+            const fontStyle = fontStyleMap[word.text] ?? globalFontStyle;
             return (
               <text
                 key={index}

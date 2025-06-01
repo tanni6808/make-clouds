@@ -173,7 +173,7 @@ export function FontDropdown({
         }}
         onClick={() => setOpen(!open)}
       >
-        {selected ? selected.label : placeholder || options[0].label}
+        {selected ? selected.label : placeholder || options[2].label}
       </button>
 
       {open && (
@@ -186,7 +186,8 @@ export function FontDropdown({
                 key={option.value}
                 className={clsx(
                   "px-4 py-2 hover:bg-gray-md cursor-pointer",
-                  fontClass
+                  fontClass,
+                  `${option.value === selected?.value ? "bg-gray-md" : ""}`
                 )}
                 style={{ fontWeight }}
                 onClick={() => {

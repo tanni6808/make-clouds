@@ -13,8 +13,8 @@ import { FontStyle } from "../lib/definitions";
 
 export default function StylePage() {
   const router = useRouter();
-  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
-  const setDefaultFontStyle = useWordCloudStore((s) => s.setDefaultFontStyle);
+  const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
+  const setGlobalFontStyle = useWordCloudStore((s) => s.setGlobalFontStyle);
   const { composition } = useWordCloudStore();
   const canvasRef = useRef<CanvasRef>(null);
   const handleRegenerateWordCloud = () => {
@@ -22,15 +22,15 @@ export default function StylePage() {
   };
 
   const handleChange = (key: keyof FontStyle, value: any) => {
-    setDefaultFontStyle({ ...defaultFontStyle, [key]: value });
+    setGlobalFontStyle({ ...globalFontStyle, [key]: value });
   };
   const handleFontChange = (value: string) => {
     const lastSpace = value.lastIndexOf(" ");
     const fontFamily = value.slice(0, lastSpace);
     const fontWeight = value.slice(lastSpace + 1);
 
-    setDefaultFontStyle({
-      ...defaultFontStyle,
+    setGlobalFontStyle({
+      ...globalFontStyle,
       fontFamily,
       fontWeight,
     });
@@ -64,11 +64,11 @@ export default function StylePage() {
               x="${word.x - minX + padding}"
               y="${word.y - minY + padding}"
               font-size="${word.fontSize}"
-              font-family="${defaultFontStyle.fontFamily}"
-              font-weight="${defaultFontStyle.fontWeight}"
-              font-style="${defaultFontStyle.italic ? "italic" : "normal"}"
+              font-family="${globalFontStyle.fontFamily}"
+              font-weight="${globalFontStyle.fontWeight}"
+              font-style="${globalFontStyle.italic ? "italic" : "normal"}"
               fill="#545454"
-              filter="${defaultFontStyle.shadow ? "url(#text-shadow)" : ""}"
+              filter="${globalFontStyle.shadow ? "url(#text-shadow)" : ""}"
             >
               ${word.text}
             </text>
@@ -116,15 +116,15 @@ export default function StylePage() {
     ctx.fillStyle = "#545454";
 
     words.forEach((word) => {
-      if (defaultFontStyle.shadow) {
+      if (globalFontStyle.shadow) {
         ctx.shadowColor = "rgba(0,0,0,0.5)";
         ctx.shadowBlur = 5;
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
       }
-      ctx.font = `${defaultFontStyle.italic ? "italic" : ""} ${
-        defaultFontStyle.fontWeight
-      } ${word.fontSize}px ${defaultFontStyle.fontFamily}`;
+      ctx.font = `${globalFontStyle.italic ? "italic" : ""} ${
+        globalFontStyle.fontWeight
+      } ${word.fontSize}px ${globalFontStyle.fontFamily}`;
       ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
     });
 
@@ -162,7 +162,7 @@ export default function StylePage() {
           <div className="text-center mb-[10px]">字型</div>
           <div className="flex flex-col gap-2">
             <FontDropdown
-              value={`${defaultFontStyle.fontFamily} ${defaultFontStyle.fontWeight}`}
+              value={`${globalFontStyle.fontFamily} ${globalFontStyle.fontWeight}`}
               onChange={(val) => handleFontChange(val)}
               options={[
                 { label: "思源黑體 Light", value: "Noto Sans TC 300" },
@@ -189,21 +189,21 @@ export default function StylePage() {
             <div className="grid grid-cols-[1fr_1fr] gap-2">
               <button
                 className={`text-center rounded-lg h-[40px] italic ${
-                  defaultFontStyle.italic
+                  globalFontStyle.italic
                     ? "bg-primary-dark text-white hover:bg-primary-light"
                     : "bg-gray-light hover:bg-gray-md"
                 }`}
-                onClick={() => handleChange("italic", !defaultFontStyle.italic)}
+                onClick={() => handleChange("italic", !globalFontStyle.italic)}
               >
                 斜體
               </button>
               <button
                 className={`text-center rounded-lg h-[40px] text-shadow-lg ${
-                  defaultFontStyle.shadow
+                  globalFontStyle.shadow
                     ? "bg-primary-dark text-white hover:bg-primary-light"
                     : "bg-gray-light hover:bg-gray-md"
                 }`}
-                onClick={() => handleChange("shadow", !defaultFontStyle.shadow)}
+                onClick={() => handleChange("shadow", !globalFontStyle.shadow)}
               >
                 陰影
               </button>

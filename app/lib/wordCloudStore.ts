@@ -31,10 +31,10 @@ type WordCloudState = {
   // 階段三: 字型、顏色
   fontStyleMap: Record<string, FontStyle>;
   setFontStyle: (text: string, style: FontStyle) => void;
-  setAllFontStyles: (styles: Record<string, FontStyle>) => void;
+  // setAllFontStyles: (styles: Record<string, FontStyle>) => void;
 
-  defaultFontStyle: FontStyle;
-  setDefaultFontStyle: (fontStyle: FontStyle) => void;
+  globalFontStyle: FontStyle;
+  setGlobalFontStyle: (fontStyle: FontStyle) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -108,13 +108,13 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
   setFontStyle: (text, style) => {
     set({ fontStyleMap: { ...get().fontStyleMap, [text]: style } });
   },
-  setAllFontStyles: (styles) => set({ fontStyleMap: styles }),
+  // setAllFontStyles: (styles) => set({ fontStyleMap: styles }),
 
-  defaultFontStyle: {
+  globalFontStyle: {
     fontFamily: "Noto sans TC",
     fontWeight: "bold",
     italic: false,
     shadow: false,
   },
-  setDefaultFontStyle: (style) => set({ defaultFontStyle: style }),
+  setGlobalFontStyle: (style) => set({ globalFontStyle: style }),
 }));
