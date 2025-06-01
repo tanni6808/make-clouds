@@ -11,7 +11,6 @@ import { Transform, WordComposition } from "../lib/definitions";
 import Button from "./button";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 import { generateWordCloud } from "../lib/wordCloudMethod";
-import { text } from "stream/consumers";
 
 export interface CanvasRef {
   regenerate: () => void;
