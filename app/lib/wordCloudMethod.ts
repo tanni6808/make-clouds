@@ -174,6 +174,8 @@ export function generateWordCloud(
           x: x,
           y: y,
           fontSize: word.size,
+          width: bbox.width,
+          height: bbox.height,
         });
       }
       attempts++;
@@ -182,12 +184,14 @@ export function generateWordCloud(
     if (!placed) {
       text.setAttribute("x", "0");
       text.setAttribute("y", "0");
-      // group.appendChild(text);
+      const bbox = text.getBBox();
       result.push({
         text: word.text,
         x: 0,
         y: 0,
         fontSize: word.size,
+        width: bbox.width,
+        height: bbox.height,
       });
       alert(`${word.text}找不到合適的位置，將放置於左上角。`);
       return;

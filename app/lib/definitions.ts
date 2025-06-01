@@ -46,6 +46,8 @@ export type WordComposition = {
   y: number;
   fontSize: number;
   rotate?: number;
+  width: number;
+  height: number;
 };
 
 export type FontStyle = {

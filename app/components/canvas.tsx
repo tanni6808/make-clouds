@@ -260,7 +260,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        // onWheel={handleWheel}
         style={{ cursor: "move" }}
       >
         <g
@@ -276,15 +275,14 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                 y={word.y}
                 fontSize={word.fontSize}
                 fontFamily={fontStyle.fontFamily}
+                fontWeight={fontStyle.fontWeight}
                 fontStyle={fontStyle.italic ? "italic" : "normal"}
                 style={{
                   textShadow: fontStyle.shadow
                     ? "2px 2px 5px rgba(0,0,0,0.5)"
                     : "",
                 }}
-                textDecoration={fontStyle.underline ? "underline" : "none"}
                 fill="#545454"
-                fontWeight={fontStyle.fontWeight}
                 onMouseDown={(e) => {
                   handleTextMouseDown(e, index);
                 }}

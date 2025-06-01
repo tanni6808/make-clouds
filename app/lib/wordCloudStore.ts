@@ -114,7 +114,6 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     fontFamily: "Noto sans TC",
     fontWeight: "bold",
     italic: false,
-    underline: false,
     shadow: false,
   },
   setDefaultFontStyle: (style) => set({ defaultFontStyle: style }),

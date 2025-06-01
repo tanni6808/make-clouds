@@ -40,10 +40,10 @@ export default function StylePage() {
     if (!words || words.length === 0) return;
 
     // 計算 SVG 寬高
-    const padding = 100;
+    const padding = 50;
     const minX = Math.min(...words.map((w) => w.x));
-    const maxX = Math.max(...words.map((w) => w.x));
-    const minY = Math.min(...words.map((w) => w.y));
+    const maxX = Math.max(...words.map((w) => w.x + w.width));
+    const minY = Math.min(...words.map((w) => w.y - w.height));
     const maxY = Math.max(...words.map((w) => w.y));
 
     const width = maxX - minX + padding * 2;
@@ -51,6 +51,11 @@ export default function StylePage() {
 
     const svgContent = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <defs>
+        <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="2" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.5)" />
+        </filter>
+      </defs>
       <g>
         ${words
           .map(
@@ -60,8 +65,10 @@ export default function StylePage() {
               y="${word.y - minY + padding}"
               font-size="${word.fontSize}"
               font-family="${defaultFontStyle.fontFamily}"
+              font-weight="${defaultFontStyle.fontWeight}"
+              font-style="${defaultFontStyle.italic ? "italic" : "normal"}"
               fill="#545454"
-              font-weight="bold"
+              filter="${defaultFontStyle.shadow ? "url(#text-shadow)" : ""}"
             >
               ${word.text}
             </text>
@@ -89,10 +96,10 @@ export default function StylePage() {
     const words = canvasRef.current?.getWordComposition();
     if (!words || words.length === 0) return;
 
-    const padding = 100;
+    const padding = 50;
     const minX = Math.min(...words.map((w) => w.x));
-    const maxX = Math.max(...words.map((w) => w.x));
-    const minY = Math.min(...words.map((w) => w.y));
+    const maxX = Math.max(...words.map((w) => w.x + w.width));
+    const minY = Math.min(...words.map((w) => w.y - w.height));
     const maxY = Math.max(...words.map((w) => w.y));
     const width = maxX - minX + padding * 2;
     const height = maxY - minY + padding * 2;
@@ -103,13 +110,21 @@ export default function StylePage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "rgb(255 255 255 / 0%)";
+    ctx.fillStyle = "rgb(255 255 255 / 0%)"; // "rgb(255 255 255)";
     ctx.fillRect(0, 0, width, height);
 
     ctx.fillStyle = "#545454";
 
     words.forEach((word) => {
-      ctx.font = `bold ${word.fontSize}px ${defaultFontStyle.fontFamily}`;
+      if (defaultFontStyle.shadow) {
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+      }
+      ctx.font = `${defaultFontStyle.italic ? "italic" : ""} ${
+        defaultFontStyle.fontWeight
+      } ${word.fontSize}px ${defaultFontStyle.fontFamily}`;
       ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
     });
 
@@ -155,28 +170,23 @@ export default function StylePage() {
                 { label: "思源黑體 Bold", value: "Noto Sans TC 700" },
                 { label: "思源黑體 Black", value: "Noto Sans TC 900" },
                 { label: "思源宋體 Light", value: "Noto Serif TC 300" },
+                { label: "思源宋體 Regular", value: "Noto Serif TC 400" },
+                { label: "思源宋體 Bold", value: "Noto Serif TC 700" },
+                { label: "思源宋體 Black", value: "Noto Serif TC 900" },
                 {
                   label: "朱古力黑體 Regular",
                   value: "Chocolate Classical Sans 400",
                 },
+                { label: "霞鶩文楷 Light", value: "LXGW WenKai TC 300" },
                 { label: "霞鶩文楷 Regular", value: "LXGW WenKai TC 400" },
+                { label: "霞鶩文楷 Bold", value: "LXGW WenKai TC 700" },
                 {
                   label: "仙人掌明體 Regular",
                   value: "Cactus Classical Serif 400",
                 },
               ]}
             ></FontDropdown>
-            <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
-              <button
-                className={`text-center rounded-lg h-[40px] text-shadow-lg ${
-                  defaultFontStyle.shadow
-                    ? "bg-primary-dark text-white hover:bg-primary-light"
-                    : "bg-gray-light hover:bg-gray-md"
-                }`}
-                onClick={() => handleChange("shadow", !defaultFontStyle.shadow)}
-              >
-                陰影
-              </button>
+            <div className="grid grid-cols-[1fr_1fr] gap-2">
               <button
                 className={`text-center rounded-lg h-[40px] italic ${
                   defaultFontStyle.italic
@@ -188,16 +198,14 @@ export default function StylePage() {
                 斜體
               </button>
               <button
-                className={`text-center rounded-lg h-[40px] underline ${
-                  defaultFontStyle.underline
+                className={`text-center rounded-lg h-[40px] text-shadow-lg ${
+                  defaultFontStyle.shadow
                     ? "bg-primary-dark text-white hover:bg-primary-light"
                     : "bg-gray-light hover:bg-gray-md"
                 }`}
-                onClick={() =>
-                  handleChange("underline", !defaultFontStyle.underline)
-                }
+                onClick={() => handleChange("shadow", !defaultFontStyle.shadow)}
               >
-                底線
+                陰影
               </button>
             </div>
           </div>

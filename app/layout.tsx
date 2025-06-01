@@ -5,29 +5,10 @@ import Header from "./components/header";
 import Workspace from "./components/workspace";
 import Footer from "./components/footer";
 
-// const notoSansTC = Noto_Sans_TC({
-//   variable: "--font-noto-sans",
-//   weight: "700",
-//   subsets: ["latin"],
-// });
-
 const chocoClassicalSans = Chocolate_Classical_Sans({
-  variable: "--font-chocolate",
   weight: "400",
   subsets: ["latin"],
 });
-
-// const lxgwWKTC = LXGW_WenKai_TC({
-//   variable: "--font-lxgw-wenkai",
-//   weight: "700",
-//   subsets: ["latin"],
-// });
-
-// const cactusClassicalSerif = Cactus_Classical_Serif({
-//   variable: "--font-cactus-classical",
-//   weight: "400",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "製雲",
