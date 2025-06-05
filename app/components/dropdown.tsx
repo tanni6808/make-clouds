@@ -14,6 +14,28 @@ const notoSansTC = Noto_Sans_TC({
   subsets: ["latin"],
 });
 
+//////// For weak internet environment /////////
+// const notoSerifTC = Noto_Sans_TC({
+//   weight: ["300", "400", "700", "900"],
+//   subsets: ["latin"],
+// });
+
+// const chocoClassicalSans = Noto_Sans_TC({
+//   weight: ["300", "400", "700", "900"],
+//   subsets: ["latin"],
+// });
+
+// const lxgwWenKaiTC = Noto_Sans_TC({
+//   weight: ["300", "400", "700", "900"],
+//   subsets: ["latin"],
+// });
+
+// const cactusClassicalSerif = Noto_Sans_TC({
+//   weight: ["300", "400", "700", "900"],
+//   subsets: ["latin"],
+// });
+////////////////////////////////////////////////
+
 const notoSerifTC = Noto_Serif_TC({
   weight: ["300", "400", "700", "900"],
   subsets: ["latin"],

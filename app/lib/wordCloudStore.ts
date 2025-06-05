@@ -50,6 +50,8 @@ type WordCloudState = {
   colorSchemes: ColorScheme[];
   setColorSchemes: (schemes: ColorScheme[]) => void;
   setRandomColorsFromScheme: () => void;
+  customColorScheme: string[];
+  setCustomColorScheme: (colors: string[]) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -144,26 +146,56 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
   setColorScheme: (mode: string) => set({ schemeMode: mode }),
   colorSchemes: [],
   setColorSchemes: (schemes: ColorScheme[]) => set({ colorSchemes: schemes }),
+  customColorScheme: [],
+  setCustomColorScheme: (colors: string[]) => {
+    const { getSelectedWords, baseTextColor } = get();
+    const words = getSelectedWords();
+    const textColorMap: Record<string, TextColor> = {};
+    const colorList = [baseTextColor, ...colors];
+
+    words.forEach((word, i) => {
+      const color = colorList[i % colorList.length];
+      textColorMap[word.text] = { color, isCustom: false };
+    });
+
+    set({
+      customColorScheme: colors,
+      schemeMode: "custom",
+      textColorMap,
+    });
+  },
   setRandomColorsFromScheme: () => {
-    const { schemeMode, colorSchemes, getSelectedWords } = get();
-
-    if (schemeMode === "none") {
-      const map: Record<string, TextColor> = {};
-      getSelectedWords().forEach((word) => {
-        map[word.text] = { color: get().baseTextColor, isCustom: false };
-      });
-      set({ textColorMap: map });
-      return;
-    }
-
-    const scheme = colorSchemes.find((s) => s.mode === schemeMode);
-    if (!scheme) return;
+    const {
+      baseTextColor,
+      schemeMode,
+      colorSchemes,
+      getSelectedWords,
+      customColorScheme,
+    } = get();
 
     const words = getSelectedWords();
     const map: Record<string, TextColor> = {};
+
+    let colorList: string[] = [];
+
+    if (schemeMode === "none") {
+      colorList = [baseTextColor];
+    } else if (schemeMode === "custom") {
+      if (customColorScheme.length === 0) {
+        colorList = [baseTextColor];
+      } else {
+        colorList = [baseTextColor, ...customColorScheme];
+      }
+    } else {
+      const scheme = colorSchemes.find((s) => s.mode === schemeMode);
+      if (scheme) colorList = scheme.colors;
+    }
+
+    if (colorList.length === 0) return;
+
     words.forEach((word) => {
       const randomColor =
-        scheme.colors[Math.floor(Math.random() * scheme.colors.length)];
+        colorList[Math.floor(Math.random() * colorList.length)];
       map[word.text] = { color: randomColor, isCustom: false };
     });
 

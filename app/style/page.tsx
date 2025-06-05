@@ -1,27 +1,22 @@
 "use client";
 import Button from "../components/button";
-import { CustomDropdown, FontDropdown } from "../components/dropdown";
 import Canvas, { CanvasRef } from "../components/canvas";
-// import FontPanel from "../components/style/fontPanel";
+import FontPanel from "../components/style/fontPanel";
 import ColorPanel from "../components/style/colorPanel";
 // import WordsList from "../components/style/wordList";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 
 import { useRouter } from "next/navigation";
 import { useRef, useEffect } from "react";
-import { FontStyle } from "../lib/definitions";
 
 export default function StylePage() {
   const router = useRouter();
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
-  const setGlobalFontStyle = useWordCloudStore((s) => s.setGlobalFontStyle);
   const {
     composition,
     baseTextColor,
     textColorMap,
     schemeMode,
-    colorSchemes,
-    setBaseTextColor,
     setColorSchemes,
     setRandomColorsFromScheme,
   } = useWordCloudStore();
@@ -30,20 +25,6 @@ export default function StylePage() {
     canvasRef.current?.regenerate();
   };
 
-  const handleChange = (key: keyof FontStyle, value: any) => {
-    setGlobalFontStyle({ ...globalFontStyle, [key]: value });
-  };
-  const handleFontChange = (value: string) => {
-    const lastSpace = value.lastIndexOf(" ");
-    const fontFamily = value.slice(0, lastSpace);
-    const fontWeight = value.slice(lastSpace + 1);
-
-    setGlobalFontStyle({
-      ...globalFontStyle,
-      fontFamily,
-      fontWeight,
-    });
-  };
   const handleDownloadSVG = () => {
     const words = canvasRef.current?.getWordComposition();
     if (!words || words.length === 0) return;
@@ -203,59 +184,7 @@ export default function StylePage() {
         <Button style="hollow" onClick={handleRegenerateWordCloud}>
           重新隨機排列詞彙
         </Button>
-        {/* <WordsList></WordsList> */}
-        <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
-          <div className="text-center mb-[10px]">字型</div>
-          <div className="flex flex-col gap-2">
-            <FontDropdown
-              value={`${globalFontStyle.fontFamily} ${globalFontStyle.fontWeight}`}
-              onChange={(val) => handleFontChange(val)}
-              options={[
-                { label: "思源黑體 Light", value: "Noto Sans TC 300" },
-                { label: "思源黑體 Regular", value: "Noto Sans TC 400" },
-                { label: "思源黑體 Bold", value: "Noto Sans TC 700" },
-                { label: "思源黑體 Black", value: "Noto Sans TC 900" },
-                { label: "思源宋體 Light", value: "Noto Serif TC 300" },
-                { label: "思源宋體 Regular", value: "Noto Serif TC 400" },
-                { label: "思源宋體 Bold", value: "Noto Serif TC 700" },
-                { label: "思源宋體 Black", value: "Noto Serif TC 900" },
-                {
-                  label: "朱古力黑體 Regular",
-                  value: "Chocolate Classical Sans 400",
-                },
-                { label: "霞鶩文楷 Light", value: "LXGW WenKai TC 300" },
-                { label: "霞鶩文楷 Regular", value: "LXGW WenKai TC 400" },
-                { label: "霞鶩文楷 Bold", value: "LXGW WenKai TC 700" },
-                {
-                  label: "仙人掌明體 Regular",
-                  value: "Cactus Classical Serif 400",
-                },
-              ]}
-            ></FontDropdown>
-            <div className="grid grid-cols-[1fr_1fr] gap-2">
-              <button
-                className={`text-center rounded-lg h-[40px] italic ${
-                  globalFontStyle.italic
-                    ? "bg-primary-dark text-white hover:bg-primary-light"
-                    : "bg-gray-light hover:bg-gray-md"
-                }`}
-                onClick={() => handleChange("italic", !globalFontStyle.italic)}
-              >
-                斜體
-              </button>
-              <button
-                className={`text-center rounded-lg h-[40px] text-shadow-lg ${
-                  globalFontStyle.shadow
-                    ? "bg-primary-dark text-white hover:bg-primary-light"
-                    : "bg-gray-light hover:bg-gray-md"
-                }`}
-                onClick={() => handleChange("shadow", !globalFontStyle.shadow)}
-              >
-                陰影
-              </button>
-            </div>
-          </div>
-        </div>
+        <FontPanel />
         <ColorPanel />
         <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px] flex flex-col justify-between">
           <div className="text-center">下載文字雲</div>

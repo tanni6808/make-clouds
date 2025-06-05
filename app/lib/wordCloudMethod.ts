@@ -154,7 +154,7 @@ export function generateWordCloud(
       const startRadius = 10 + Math.random() * 200;
       const angleOffset = Math.random() * Math.PI * 2;
       const r = startRadius + step * attempts;
-      const a = angleOffset + 0.1 * attempts;
+      const a = angleOffset; //+ 0.1 * attempts;
       const x = centerX - centerOffsetX + r * Math.cos(a);
       const y = centerY + r * 0.6 * Math.sin(a);
 
