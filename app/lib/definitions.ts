@@ -18,12 +18,25 @@ export type FontStyle = {
   fontFamily: string;
   fontWeight: string | number;
   italic?: boolean;
-  shadow?: boolean;
+  underline?: boolean;
 };
 
 export type TextColor = {
   color: string;
-  isCustom: boolean;
+  sourceSlotId?: string;
+};
+
+export type TextShadow = {
+  dx: number;
+  dy: number;
+  blur: number;
+  color: { r: number; g: number; b: number };
+  opacity: number;
+};
+
+export type TextColorPaletteSlot = {
+  id: string;
+  color: string;
 };
 
 export type ColorScheme = {

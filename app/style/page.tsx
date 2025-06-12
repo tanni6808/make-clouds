@@ -1,28 +1,36 @@
 "use client";
 import Button from "../components/button";
+import TabSwitcher from "../components/tabSwitcher";
+import GlobalEditPanel from "./component/globalEditPanel";
 import Canvas, { CanvasRef } from "../components/canvas";
-import FontPanel from "../components/style/fontPanel";
-import ColorPanel from "../components/style/colorPanel";
-// import WordsList from "../components/style/wordList";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 
+// import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import IndividualEditPanel from "../components/style/individualEditPanel";
 
 export default function StylePage() {
   const router = useRouter();
+  const composition = useWordCloudStore((s) => s.composition);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
   const {
-    composition,
-    baseTextColor,
+    defaultTextColor,
+    textColorPalette,
     textColorMap,
     schemeMode,
+    colorSchemes,
     setColorSchemes,
-    setRandomColorsFromScheme,
+    setRandomTextColor,
   } = useWordCloudStore();
   const canvasRef = useRef<CanvasRef>(null);
+  const [currentEditTab, setCurrentEditTab] = useState<string>("global");
   const handleRegenerateWordCloud = () => {
     canvasRef.current?.regenerate();
+  };
+
+  const handelChangeEditTab = (value: string) => {
+    setCurrentEditTab(value);
   };
 
   const handleDownloadSVG = () => {
@@ -58,7 +66,6 @@ export default function StylePage() {
               font-weight="${globalFontStyle.fontWeight}"
               font-style="${globalFontStyle.italic ? "italic" : "normal"}"
               fill="${textColorMap[word.text].color || "#545454"}"
-              filter="${globalFontStyle.shadow ? "url(#text-shadow)" : ""}"
             >
               ${word.text}
             </text>
@@ -104,12 +111,12 @@ export default function StylePage() {
     ctx.fillRect(0, 0, width, height);
 
     words.forEach((word) => {
-      if (globalFontStyle.shadow) {
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-      }
+      // if (globalFontStyle.shadow) {
+      //   ctx.shadowColor = "rgba(0,0,0,0.5)";
+      //   ctx.shadowBlur = 5;
+      //   ctx.shadowOffsetX = 2;
+      //   ctx.shadowOffsetY = 2;
+      // }
       ctx.font = `${globalFontStyle.italic ? "italic" : ""} ${
         globalFontStyle.fontWeight
       } ${word.fontSize}px ${globalFontStyle.fontFamily}`;
@@ -137,11 +144,7 @@ export default function StylePage() {
   }, []);
 
   useEffect(() => {
-    if (schemeMode === "none") {
-      setColorSchemes([]);
-      setRandomColorsFromScheme();
-      return;
-    }
+    if (textColorPalette.length === 0) return;
 
     const fetchColorSchemes = async () => {
       const schemeAndCount = [
@@ -151,7 +154,7 @@ export default function StylePage() {
         { scheme: "triad", count: "3" },
         { scheme: "quad", count: "4" },
       ];
-      const hex = baseTextColor.replace("#", "");
+      const hex = textColorPalette[0].color.replace("#", "");
       const results = await Promise.all(
         schemeAndCount.map(({ scheme, count }) =>
           fetch(
@@ -168,42 +171,39 @@ export default function StylePage() {
       }));
 
       setColorSchemes(allColorSchemes);
-      setRandomColorsFromScheme(); // 更新詞彙顏色
+      // setRandomTextColor(); // 更新詞彙顏色
     };
 
     fetchColorSchemes();
-  }, [baseTextColor, schemeMode]);
+  }, [textColorPalette, schemeMode]);
 
   return (
     <div className="grid grid-cols-4 gap-8 h-[600px]">
       <div className="col-start-1 col-end-4">
         <Canvas ref={canvasRef} />
       </div>
-      <div className="grid grid-rows-[auto_auto_auto_1fr_100px] gap-3">
-        <div className="text-center">整體樣式編輯</div>
+      <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
         <Button style="hollow" onClick={handleRegenerateWordCloud}>
           重新隨機排列詞彙
         </Button>
-        <FontPanel />
-        <ColorPanel />
-        <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px] flex flex-col justify-between">
-          <div className="text-center">下載文字雲</div>
-          <div className="flex justify-between">
-            <Button
-              style="solid"
-              className="w-[45%]"
-              onClick={handleDownloadSVG}
-            >
-              SVG
-            </Button>
-            <Button
-              style="solid"
-              className="w-[45%]"
-              onClick={handleDownloadPNG}
-            >
-              PNG
-            </Button>
-          </div>
+        <TabSwitcher
+          tabs={[
+            { label: "整體樣式", value: "global" },
+            // { label: "個別樣式", value: "individual" },
+          ]}
+          current={currentEditTab}
+          onChange={handelChangeEditTab}
+          className="px-5"
+        />
+        {currentEditTab === "global" && <GlobalEditPanel />}
+        {currentEditTab === "individual" && <IndividualEditPanel />}
+        <div className="flex justify-between">
+          <Button style="solid" className="px-5" onClick={handleDownloadSVG}>
+            下載SVG
+          </Button>
+          <Button style="solid" className="px-5" onClick={handleDownloadPNG}>
+            下載PNG
+          </Button>
         </div>
       </div>
     </div>

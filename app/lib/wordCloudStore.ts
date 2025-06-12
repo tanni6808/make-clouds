@@ -4,7 +4,9 @@ import {
   WordComposition,
   FontStyle,
   TextColor,
+  TextColorPaletteSlot,
   ColorScheme,
+  TextShadow,
 } from "./definitions";
 
 type WordCloudState = {
@@ -35,23 +37,35 @@ type WordCloudState = {
   updateWordPosition: (text: string, x: number, y: number) => void;
 
   // 階段三: 字型、顏色
-  fontStyleMap: Record<string, FontStyle>;
-  setFontStyle: (text: string, style: FontStyle) => void;
-  // setAllFontStyles: (styles: Record<string, FontStyle>) => void;
-  globalFontStyle: FontStyle;
-  setGlobalFontStyle: (fontStyle: FontStyle) => void;
+  defaultFontStyle: FontStyle;
+  globalFontStyle: Partial<FontStyle>;
+  fontStyleMap: Record<string, Partial<FontStyle>>;
+  setGlobalFontStyle: (style: Partial<FontStyle>) => void;
+  setIndividualFontStyle: (text: string, style: Partial<FontStyle>) => void;
+  clearGlobalFontStyle: () => void;
+  clearIndividualFontStyle: (text: string) => void;
 
+  defaultTextColor: string;
+  textColorPalette: TextColorPaletteSlot[];
+  setTextColorPalette: (color: TextColorPaletteSlot[]) => void;
   textColorMap: Record<string, TextColor>;
-  setTextColor: (text: string, color: TextColor) => void;
-  baseTextColor: string;
-  setBaseTextColor: (color: string) => void;
+  updatePaletteSlot: (oldColor: string, newColor: string) => void;
+  setTextColor: (text: string, color: string) => void;
   schemeMode: string;
   setSchemeMode: (scheme: string) => void;
   colorSchemes: ColorScheme[];
   setColorSchemes: (schemes: ColorScheme[]) => void;
-  setRandomColorsFromScheme: () => void;
-  customColorScheme: string[];
-  setCustomColorScheme: (colors: string[]) => void;
+  setRandomTextColor: () => void;
+
+  // defaultTextShadow: TextShadow;
+  globalTextShadow: TextShadow;
+  textShadowMap: Record<string, TextShadow>;
+  setGlobalTextShadow: (shadow: Partial<TextShadow>) => void;
+  setTextShadow: (text: string, shadow: TextShadow) => void;
+  // baseTextColor: string;
+  // setBaseTextColor: (color: string) => void;
+  // customColorScheme: string[];
+  // setCustomColorScheme: (colors: string[]) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -121,84 +135,158 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     });
   },
 
-  fontStyleMap: {},
-  setFontStyle: (text, style) => {
-    set({ fontStyleMap: { ...get().fontStyleMap, [text]: style } });
-  },
-  // setAllFontStyles: (styles) => set({ fontStyleMap: styles }),
-
-  globalFontStyle: {
+  // 字型
+  defaultFontStyle: {
     fontFamily: "Noto sans TC",
-    fontWeight: "bold",
+    fontWeight: "700",
     italic: false,
-    shadow: false,
+    underline: false,
   },
-  setGlobalFontStyle: (style) => set({ globalFontStyle: style }),
+  globalFontStyle: {},
+  fontStyleMap: {},
 
-  textColorMap: {},
-  setTextColor: (text, color) => {
-    set({ textColorMap: { ...get().textColorMap, [text]: color } });
+  setGlobalFontStyle: (updates: Partial<FontStyle>) =>
+    set((state) => ({
+      globalFontStyle: {
+        ...state.globalFontStyle,
+        ...updates,
+      },
+    })),
+  setIndividualFontStyle: (text, style) => {
+    const current = get().fontStyleMap[text] || {};
+    set((state) => ({
+      fontStyleMap: {
+        ...state.fontStyleMap,
+        [text]: { ...current, ...style },
+      },
+    }));
   },
-  baseTextColor: "#545454",
-  setBaseTextColor: (color) => set({ baseTextColor: color }),
+
+  clearGlobalFontStyle: () => set({ globalFontStyle: {} }),
+  clearIndividualFontStyle: (text) => {
+    set((state) => {
+      const newMap = { ...state.fontStyleMap };
+      delete newMap[text];
+      return { fontStyleMap: newMap };
+    });
+  },
+
+  // 顏色
+  defaultTextColor: "#545454",
+  textColorPalette: [], // max: 5 colors
+  setTextColorPalette: (color: TextColorPaletteSlot[]) => {
+    set({ textColorPalette: color });
+  },
+  textColorMap: {},
+  updatePaletteSlot: (slotId: string, newColor: string) => {
+    set((state) => {
+      const updatedMap = { ...state.textColorMap };
+      for (const key in updatedMap) {
+        const wordColor = updatedMap[key];
+        if (wordColor.sourceSlotId === slotId) {
+          updatedMap[key] = {
+            ...wordColor,
+            color: newColor,
+          };
+        }
+      }
+      const updatedPalette = state.textColorPalette.map((slot) =>
+        slot.id === slotId ? { ...slot, color: newColor } : slot
+      );
+      return { textColorMap: updatedMap, textColorPalette: updatedPalette };
+    });
+  },
+  setTextColor: (text: string, color: string) => {
+    set((state) => ({
+      textColorMap: {
+        ...state.textColorMap,
+        [text]: {
+          color,
+        },
+      },
+    }));
+  },
   schemeMode: "none",
   setSchemeMode: (scheme) => set({ schemeMode: scheme }),
-  setColorScheme: (mode: string) => set({ schemeMode: mode }),
   colorSchemes: [],
   setColorSchemes: (schemes: ColorScheme[]) => set({ colorSchemes: schemes }),
-  customColorScheme: [],
-  setCustomColorScheme: (colors: string[]) => {
-    const { getSelectedWords, baseTextColor } = get();
-    const words = getSelectedWords();
-    const textColorMap: Record<string, TextColor> = {};
-    const colorList = [baseTextColor, ...colors];
-
-    words.forEach((word, i) => {
-      const color = colorList[i % colorList.length];
-      textColorMap[word.text] = { color, isCustom: false };
-    });
-
-    set({
-      customColorScheme: colors,
-      schemeMode: "custom",
-      textColorMap,
-    });
-  },
-  setRandomColorsFromScheme: () => {
-    const {
-      baseTextColor,
-      schemeMode,
-      colorSchemes,
-      getSelectedWords,
-      customColorScheme,
-    } = get();
+  setRandomTextColor: () => {
+    const { textColorPalette, getSelectedWords } = get();
 
     const words = getSelectedWords();
     const map: Record<string, TextColor> = {};
 
-    let colorList: string[] = [];
+    let colorList: TextColorPaletteSlot[] = textColorPalette;
 
-    if (schemeMode === "none") {
-      colorList = [baseTextColor];
-    } else if (schemeMode === "custom") {
-      if (customColorScheme.length === 0) {
-        colorList = [baseTextColor];
-      } else {
-        colorList = [baseTextColor, ...customColorScheme];
-      }
-    } else {
-      const scheme = colorSchemes.find((s) => s.mode === schemeMode);
-      if (scheme) colorList = scheme.colors;
+    if (colorList.length === 0) {
+      set((state) => {
+        const cleanedMap: Record<string, TextColor> = {};
+        for (const key in state.textColorMap) {
+          const entry = state.textColorMap[key];
+          if (!entry.sourceSlotId) {
+            cleanedMap[key] = entry;
+          }
+        }
+        return { textColorMap: cleanedMap };
+      });
+      return;
     }
-
-    if (colorList.length === 0) return;
 
     words.forEach((word) => {
       const randomColor =
         colorList[Math.floor(Math.random() * colorList.length)];
-      map[word.text] = { color: randomColor, isCustom: false };
+      map[word.text] = {
+        color: randomColor.color,
+        sourceSlotId: randomColor.id,
+      };
     });
 
     set({ textColorMap: map });
   },
+
+  globalTextShadow: {
+    dx: 0,
+    dy: 0,
+    blur: 0,
+    color: { r: 84, g: 85, b: 84 },
+    opacity: 0,
+  },
+  textShadowMap: {},
+  setGlobalTextShadow: (shadow: Partial<TextShadow>) =>
+    set((state) => ({
+      globalTextShadow: {
+        ...state.globalTextShadow,
+        ...shadow,
+      },
+    })),
+  setTextShadow: (text: string, shadow: TextShadow) => {
+    const current = get().textShadowMap[text] || {};
+    set((state) => ({
+      textShadowMap: {
+        ...state.textShadowMap,
+        [text]: { ...current, ...shadow },
+      },
+    }));
+  },
+  // baseTextColor: "#545454",
+  // setBaseTextColor: (color) => set({ baseTextColor: color }),
+  // setColorScheme: (mode: string) => set({ schemeMode: mode }),
+  // customColorScheme: [],
+  // setCustomColorScheme: (colors: string[]) => {
+  //   const { getSelectedWords, baseTextColor } = get();
+  //   const words = getSelectedWords();
+  //   const textColorMap: Record<string, TextColor> = {};
+  //   const colorList = [baseTextColor, ...colors];
+
+  //   words.forEach((word, i) => {
+  //     const color = colorList[i % colorList.length];
+  //     textColorMap[word.text] = { color, isCustom: false };
+  //   });
+
+  //   set({
+  //     customColorScheme: colors,
+  //     schemeMode: "custom",
+  //     textColorMap,
+  //   });
+  // },
 }));

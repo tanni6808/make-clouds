@@ -14,79 +14,17 @@ function getTextColorForBackground(hexColor: string): string {
   return yiq >= 128 ? "#545454" : "#fff"; // 淺色背景用深字，深色背景用白字
 }
 
-export function BaseColorPicker({
+export default function ColorPicker({
   color,
   onChange,
+  onDelete,
+  size = "30",
 }: {
   color: string;
   onChange: (newColor: string) => void;
-}) {
-  const [hover, setHover] = useState(false);
-  const [open, setOpen] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
-
-  // 點擊外部時關閉 picker
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleColorChange = (colorResult: any) => {
-    onChange(colorResult.hex);
-    // setOpen(false);
-  };
-
-  return (
-    <div
-      ref={pickerRef}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="w-[24px] h-[24px] rounded-full flex justify-center items-center"
-        style={{
-          backgroundColor: color,
-          border: "2px solid #545454",
-        }}
-      >
-        {hover && (
-          <TbColorPicker
-            style={{
-              color: getTextColorForBackground(color),
-              textShadow: "0 0 3px rgba(0,0,0,0.3)",
-            }}
-          />
-        )}
-      </button>
-      {open && (
-        <div className="absolute z-50 mt-2">
-          <ChromePicker
-            color={color}
-            onChange={handleColorChange}
-            disableAlpha
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-type Props = {
-  color: string;
-  onChange: (newColor: string) => void;
   onDelete?: () => void;
-};
-
-export function CustomColorPicker({ color, onChange, onDelete }: Props) {
+  size?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -114,7 +52,7 @@ export function CustomColorPicker({ color, onChange, onDelete }: Props) {
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="w-[30px] h-[30px] rounded-full flex items-center justify-center transition relative cursor-pointer"
+        className={`w-[${size}px] h-[${size}px] rounded-full flex items-center justify-center transition relative cursor-pointer`}
         style={{
           backgroundColor: color,
           border: "2px solid #545454",
@@ -155,6 +93,18 @@ export function CustomColorPicker({ color, onChange, onDelete }: Props) {
           />
         </div>
       )}
+    </div>
+  );
+}
+
+export function ColorAndAlphaPicker() {
+  return (
+    <div className="flex items-center bg-gray-light x-2 py-1.5 rounded">
+      <div className="rounded-full bg-red border-2 w-[20px] h-[20px] mx-2"></div>
+      <div className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3 w-19">
+        <div className="">100</div>
+        <div className="">％</div>
+      </div>
     </div>
   );
 }

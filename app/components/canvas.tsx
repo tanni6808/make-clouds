@@ -22,7 +22,6 @@ interface CanvasProps {}
 
 function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   const pathname = usePathname();
-  const shouldGenerate = pathname === "/composition";
 
   // States for canvas manipulating
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
@@ -49,10 +48,15 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   // Status for styles
   const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
+  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
 
   // Status for colors
   const textColorMap = useWordCloudStore((s) => s.textColorMap);
-  const baseTextColor = useWordCloudStore((s) => s.baseTextColor);
+  const defaultTextColor = useWordCloudStore((s) => s.defaultTextColor);
+
+  // Status for Shadow
+  const textShadowMap = useWordCloudStore((s) => s.textShadowMap);
+  const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
 
   // Word cloud store
   const {
@@ -63,6 +67,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     getSelectedWords,
     setComposition,
   } = useWordCloudStore();
+  const shouldGenerate = pathname === "/composition";
 
   // Methods
   function resetCanvasPosition(animation = true) {
@@ -271,7 +276,9 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
         >
           {composition.map((word, index) => {
-            const fontStyle = fontStyleMap[word.text] ?? globalFontStyle;
+            const fontStyle =
+              fontStyleMap[word.text] ?? globalFontStyle ?? defaultFontStyle;
+            const textShadow = textShadowMap[word.text] ?? globalTextShadow;
             return (
               <text
                 key={index}
@@ -282,11 +289,10 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                 fontWeight={fontStyle.fontWeight}
                 fontStyle={fontStyle.italic ? "italic" : "normal"}
                 style={{
-                  textShadow: fontStyle.shadow
-                    ? "2px 2px 5px rgba(0,0,0,0.5)"
-                    : "",
+                  textShadow: `${textShadow.dx}px ${textShadow.dy}px ${textShadow.blur}px rgba(${textShadow.color.r},${textShadow.color.g},${textShadow.color.b},${textShadow.opacity})`,
+                  textDecoration: fontStyle.underline ? "underline" : "none",
                 }}
-                fill={textColorMap[word.text]?.color || baseTextColor}
+                fill={textColorMap[word.text]?.color || defaultTextColor}
                 onMouseDown={(e) => {
                   handleTextMouseDown(e, index);
                 }}
