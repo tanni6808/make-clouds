@@ -216,7 +216,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     const words = getSelectedWords();
     const map: Record<string, TextColor> = {};
 
-    let colorList: TextColorPaletteSlot[] = textColorPalette;
+    const colorList: TextColorPaletteSlot[] = textColorPalette;
 
     if (colorList.length === 0) {
       set((state) => {
