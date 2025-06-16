@@ -176,6 +176,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
                         ) : (
                           textColorPalette.map((c) => (
                             <div
+                              key={c.id}
                               className="w-4 h-4 rounded-sm cursor-pointer"
                               style={{
                                 border: "1px solid #545454",
