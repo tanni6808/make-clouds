@@ -248,8 +248,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     dx: 0,
     dy: 0,
     blur: 0,
-    color: { r: 84, g: 85, b: 84 },
-    opacity: 0,
+    rgba: { r: 84, g: 84, b: 84, a: 0 },
   },
   textShadowMap: {},
   setGlobalTextShadow: (shadow: Partial<TextShadow>) =>

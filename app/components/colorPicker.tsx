@@ -1,6 +1,7 @@
 import { ChromePicker } from "react-color";
 import { useState, useRef, useEffect } from "react";
 import { TbColorPicker } from "react-icons/tb";
+import { RGBAColor } from "../lib/definitions";
 
 function getTextColorForBackground(hexColor: string): string {
   // 去掉 "#" 開頭
@@ -97,14 +98,53 @@ export default function ColorPicker({
   );
 }
 
-export function ColorAndAlphaPicker() {
+export function ColorAndAlphaPicker({
+  rgba,
+  onChange,
+}: {
+  rgba: RGBAColor;
+  onChange: (newColor: RGBAColor) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const rgbColor = { r: rgba.r, g: rgba.g, b: rgba.b };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="flex items-center bg-gray-light x-2 py-1.5 rounded">
-      <div className="rounded-full bg-red border-2 w-[20px] h-[20px] mx-2"></div>
-      <div className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3 w-19">
-        <div className="">100</div>
-        <div className="">％</div>
+    <div ref={pickerRef} className="">
+      <div
+        className="flex items-center bg-gray-light x-2 py-1.5 rounded cursor-pointer"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <div
+          className="rounded-full border-2 w-[20px] h-[20px] mx-2"
+          style={{ backgroundColor: `rgb(${rgba.r},${rgba.g},${rgba.b})` }}
+        ></div>
+        <div className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3 w-19">
+          <div className="">{rgba.a ? Math.floor(rgba.a * 100) : 0}</div>
+          <div className="">％</div>
+        </div>
       </div>
+      {open && (
+        <div className="absolute z-50 mt-2 translate-x-[-80%] translate-y-[-120%]">
+          <ChromePicker
+            color={rgba}
+            onChange={(colorResult) => onChange(colorResult.rgb)}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -289,7 +289,11 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                 fontWeight={fontStyle.fontWeight}
                 fontStyle={fontStyle.italic ? "italic" : "normal"}
                 style={{
-                  textShadow: `${textShadow.dx}px ${textShadow.dy}px ${textShadow.blur}px rgba(${textShadow.color.r},${textShadow.color.g},${textShadow.color.b},${textShadow.opacity})`,
+                  textShadow: `${textShadow.dx}px ${textShadow.dy}px ${
+                    textShadow.blur
+                  }px rgba(${textShadow.rgba.r},${textShadow.rgba.g},${
+                    textShadow.rgba.b
+                  },${textShadow.rgba.a ? textShadow.rgba.a : 0})`,
                   textDecoration: fontStyle.underline ? "underline" : "none",
                 }}
                 fill={textColorMap[word.text]?.color || defaultTextColor}

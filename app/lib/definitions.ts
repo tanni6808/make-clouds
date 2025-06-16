@@ -26,12 +26,18 @@ export type TextColor = {
   sourceSlotId?: string;
 };
 
+export type RGBAColor = {
+  r: number;
+  g: number;
+  b: number;
+  a?: number;
+};
+
 export type TextShadow = {
   dx: number;
   dy: number;
   blur: number;
-  color: { r: number; g: number; b: number };
-  opacity: number;
+  rgba: RGBAColor;
 };
 
 export type TextColorPaletteSlot = {

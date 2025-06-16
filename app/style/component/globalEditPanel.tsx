@@ -1,10 +1,14 @@
 import clsx from "clsx";
 import { nanoid } from "nanoid";
 
-import { FontStyle, TextColorPaletteSlot } from "@/app/lib/definitions";
+import {
+  FontStyle,
+  RGBAColor,
+  TextColorPaletteSlot,
+} from "@/app/lib/definitions";
 import Button from "@/app/components/button";
 import Counter from "@/app/components/counter";
-// import TabSwitcher from "@/app/components/tabSwitcher";
+import TabSwitcher from "@/app/components/tabSwitcher";
 import { Dropdown } from "@/app/components/dropdown";
 import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import { FontDropdown } from "@/app/components/dropdown";
@@ -154,15 +158,8 @@ export default function GlobalEditPanel() {
   const handleShadowBlur = (blur: number) => {
     setGlobalTextShadow({ blur: blur });
   };
-
-  const handleShadowColor = (color: string) => {
-    setShadowColor(color);
-    const rgbColor = hexToRgb(color);
-    if (rgbColor) setGlobalTextShadow({ color: rgbColor });
-  };
-  const handleShadowOpacity = (opacity: number) => {
-    setShadowOpacity(opacity);
-    setGlobalTextShadow({ opacity: opacity / 100 });
+  const handleShadowRGBA = (color: RGBAColor) => {
+    setGlobalTextShadow({ rgba: color });
   };
 
   return (
@@ -194,9 +191,9 @@ export default function GlobalEditPanel() {
                 value: "Cactus Classical Serif 400",
               },
             ]}
-            placeholder="選擇字型"
+            placeholder="思源黑體 粗"
           />
-          <div className="grid grid-cols-[1fr_1fr] gap-2">
+          <div className="grid grid-cols-[1fr] gap-2">
             <button
               className={`text-center rounded-lg h-[40px] italic ${
                 globalFontStyle.italic
@@ -207,7 +204,7 @@ export default function GlobalEditPanel() {
             >
               斜體
             </button>
-            <button
+            {/* <button
               className={`text-center rounded-lg h-[40px] underline ${
                 globalFontStyle.underline
                   ? "bg-primary-dark text-white hover:bg-primary-light"
@@ -218,13 +215,13 @@ export default function GlobalEditPanel() {
               }
             >
               底線
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
       <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
         <div className="text-center mb-[10px]">文字顏色</div>
-        {/* <TabSwitcher
+        <TabSwitcher
           tabs={[
             { label: "顏色", value: "color" },
             { label: "陰影", value: "shadow" },
@@ -232,7 +229,7 @@ export default function GlobalEditPanel() {
           current={currentColorEditTab}
           onChange={handleChangeColorEditTab}
           className="px-7"
-        /> */}
+        />
         {currentColorEditTab === "color" && (
           <div className="flex flex-col justify-end gap-2 mt-3">
             <div className="flex justify-center gap-1 bg-gray-light p-2 rounded-lg">
@@ -311,13 +308,20 @@ export default function GlobalEditPanel() {
                 <li className="border-2 rounded-[50%] p-0.5 w-[20px] h-[20px] mx-0.5 bg-red  outline-3 outline-offset-2 "></li>
                 <li className="border-2 rounded-[50%] p-0.5 w-[20px] h-[20px] mx-0.5 bg-red  outline-3 outline-offset-2 "></li>
                 <li className="border-2 rounded-[50%] p-0.5 w-[20px] h-[20px] mx-0.5 bg-red  outline-3 outline-offset-2 "></li>
-              </ul> */}
+                </ul> */}
             </div>
             <div className="flex flex-col gap-2 items-center">
               <div className="flex items-center">
+                <div className="mr-2">陰影顏色</div>
+                <ColorAndAlphaPicker
+                  rgba={globalTextShadow.rgba}
+                  onChange={handleShadowRGBA}
+                />
+              </div>
+              <div className="flex items-center">
                 <div className="mr-2">水平位移</div>
                 <Counter
-                  init={globalTextShadow.dx}
+                  value={globalTextShadow.dx}
                   max={10}
                   min={-10}
                   onChange={handleShadowX}
@@ -326,7 +330,7 @@ export default function GlobalEditPanel() {
               <div className="flex items-center">
                 <div className="mr-2">垂直位移</div>
                 <Counter
-                  init={globalTextShadow.dy}
+                  value={globalTextShadow.dy}
                   max={10}
                   min={-10}
                   onChange={handleShadowY}
@@ -335,39 +339,11 @@ export default function GlobalEditPanel() {
               <div className="flex items-center">
                 <div className="mr-2">模糊程度</div>
                 <Counter
-                  init={globalTextShadow.blur}
+                  value={globalTextShadow.blur}
                   max={20}
                   min={0}
                   onChange={handleShadowBlur}
                 />
-              </div>
-              <div className="flex items-center">
-                <div className="mr-2">陰影顏色</div>
-                <ColorAndAlphaPicker />
-                {/* <div className="flex items-center bg-gray-light x-2 py-0.5 rounded">
-                  <div className="px-2 py-1">
-                    <ColorPicker
-                      color={shadowColor}
-                      onChange={handleShadowColor}
-                      size="20"
-                    />
-                  </div>
-
-                  <div className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3 w-19">
-                    <input
-                      type="number"
-                      className="text-right"
-                      value={shadowOpacity}
-                      step={1}
-                      max={100}
-                      min={0}
-                      onChange={(e) =>
-                        handleShadowOpacity(Number(e.target.value))
-                      }
-                    />
-                    <div className="">％</div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>

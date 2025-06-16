@@ -13,16 +13,11 @@ import IndividualEditPanel from "../components/style/individualEditPanel";
 export default function StylePage() {
   const router = useRouter();
   const composition = useWordCloudStore((s) => s.composition);
+  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
-  const {
-    defaultTextColor,
-    textColorPalette,
-    textColorMap,
-    schemeMode,
-    colorSchemes,
-    setColorSchemes,
-    setRandomTextColor,
-  } = useWordCloudStore();
+  const { textColorPalette, textColorMap, schemeMode, setColorSchemes } =
+    useWordCloudStore();
+  const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
   const canvasRef = useRef<CanvasRef>(null);
   const [currentEditTab, setCurrentEditTab] = useState<string>("global");
   const handleRegenerateWordCloud = () => {
@@ -51,7 +46,13 @@ export default function StylePage() {
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
       <defs>
         <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="2" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.5)" />
+          <feDropShadow dx="${globalTextShadow.dx}" dy="${
+      globalTextShadow.dy
+    }" stdDeviation="${globalTextShadow.blur / 2}" flood-color="rgba(${
+      globalTextShadow.rgba.r
+    },${globalTextShadow.rgba.g},${globalTextShadow.rgba.b},${
+      globalTextShadow.rgba.a || 0
+    })" />
         </filter>
       </defs>
       <g>
@@ -62,10 +63,15 @@ export default function StylePage() {
               x="${word.x - minX + padding}"
               y="${word.y - minY + padding}"
               font-size="${word.fontSize}"
-              font-family="${globalFontStyle.fontFamily}"
-              font-weight="${globalFontStyle.fontWeight}"
+              font-family="${
+                globalFontStyle?.fontFamily || defaultFontStyle.fontFamily
+              }"
+              font-weight="${
+                globalFontStyle?.fontWeight || defaultFontStyle.fontWeight
+              }"
               font-style="${globalFontStyle.italic ? "italic" : "normal"}"
-              fill="${textColorMap[word.text].color || "#545454"}"
+              fill="${textColorMap[word.text]?.color || "#545454"}"
+              filter="url(#text-shadow)"
             >
               ${word.text}
             </text>
@@ -111,17 +117,20 @@ export default function StylePage() {
     ctx.fillRect(0, 0, width, height);
 
     words.forEach((word) => {
-      // if (globalFontStyle.shadow) {
-      //   ctx.shadowColor = "rgba(0,0,0,0.5)";
-      //   ctx.shadowBlur = 5;
-      //   ctx.shadowOffsetX = 2;
-      //   ctx.shadowOffsetY = 2;
-      // }
+      ctx.shadowColor = `rgba(${globalTextShadow.rgba.r},${
+        globalTextShadow.rgba.g
+      },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})`;
+      ctx.shadowBlur = globalTextShadow.blur;
+      ctx.shadowOffsetX = globalTextShadow.dx;
+      ctx.shadowOffsetY = globalTextShadow.dy;
       ctx.font = `${globalFontStyle.italic ? "italic" : ""} ${
-        globalFontStyle.fontWeight
-      } ${word.fontSize}px ${globalFontStyle.fontFamily}`;
+        globalFontStyle?.fontWeight || defaultFontStyle.fontWeight
+      } ${word.fontSize}px ${
+        globalFontStyle?.fontFamily || defaultFontStyle.fontFamily
+      }`;
       ctx.fillStyle = textColorMap[word.text]?.color || "#545454";
       ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
+      4;
     });
 
     canvas.toBlob((blob) => {
@@ -189,7 +198,7 @@ export default function StylePage() {
         <TabSwitcher
           tabs={[
             { label: "整體樣式", value: "global" },
-            // { label: "個別樣式", value: "individual" },
+            { label: "個別樣式", value: "individual" },
           ]}
           current={currentEditTab}
           onChange={handelChangeEditTab}
