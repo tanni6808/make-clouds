@@ -147,8 +147,6 @@ export default function GlobalEditPanel() {
   // 陰影
   const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
   const setGlobalTextShadow = useWordCloudStore((s) => s.setGlobalTextShadow);
-  const [shadowColor, setShadowColor] = useState<string>("#545454");
-  const [shadowOpacity, setShadowOpacity] = useState<number>(0);
   const handleShadowX = (dx: number) => {
     setGlobalTextShadow({ dx: dx });
   };

@@ -48,7 +48,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   // Status for styles
   const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
-  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
 
   // Status for colors
   const textColorMap = useWordCloudStore((s) => s.textColorMap);
@@ -276,8 +275,10 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
         >
           {composition.map((word, index) => {
-            const fontStyle =
-              fontStyleMap[word.text] ?? globalFontStyle ?? defaultFontStyle;
+            const currentFontStyle = {
+              ...globalFontStyle,
+              ...fontStyleMap[word.text],
+            };
             const textShadow = textShadowMap[word.text] ?? globalTextShadow;
             return (
               <text
@@ -285,16 +286,15 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                 x={word.x}
                 y={word.y}
                 fontSize={word.fontSize}
-                fontFamily={fontStyle.fontFamily}
-                fontWeight={fontStyle.fontWeight}
-                fontStyle={fontStyle.italic ? "italic" : "normal"}
+                fontFamily={currentFontStyle.fontFamily}
+                fontWeight={currentFontStyle.fontWeight}
+                fontStyle={currentFontStyle.italic ? "italic" : "normal"}
                 style={{
                   textShadow: `${textShadow.dx}px ${textShadow.dy}px ${
                     textShadow.blur
                   }px rgba(${textShadow.rgba.r},${textShadow.rgba.g},${
                     textShadow.rgba.b
                   },${textShadow.rgba.a ? textShadow.rgba.a : 0})`,
-                  textDecoration: fontStyle.underline ? "underline" : "none",
                 }}
                 fill={textColorMap[word.text]?.color || defaultTextColor}
                 onMouseDown={(e) => {

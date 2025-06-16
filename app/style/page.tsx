@@ -2,19 +2,21 @@
 import Button from "../components/button";
 import TabSwitcher from "../components/tabSwitcher";
 import GlobalEditPanel from "./component/globalEditPanel";
+import IndividualEditPanel from "./component/individualEditPanel";
 import Canvas, { CanvasRef } from "../components/canvas";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 
 // import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import IndividualEditPanel from "../components/style/individualEditPanel";
+// import IndividualEditPanel from "../components/style/individualEditPanel";
 
 export default function StylePage() {
   const router = useRouter();
   const composition = useWordCloudStore((s) => s.composition);
-  const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
+  // const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
+  const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
   const { textColorPalette, textColorMap, schemeMode, setColorSchemes } =
     useWordCloudStore();
   const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
@@ -57,26 +59,26 @@ export default function StylePage() {
       </defs>
       <g>
         ${words
-          .map(
-            (word) => `
+          .map((word) => {
+            const currentFontStyle = {
+              ...globalFontStyle,
+              ...fontStyleMap[word.text],
+            };
+            return `
             <text
               x="${word.x - minX + padding}"
               y="${word.y - minY + padding}"
               font-size="${word.fontSize}"
-              font-family="${
-                globalFontStyle?.fontFamily || defaultFontStyle.fontFamily
-              }"
-              font-weight="${
-                globalFontStyle?.fontWeight || defaultFontStyle.fontWeight
-              }"
-              font-style="${globalFontStyle.italic ? "italic" : "normal"}"
+              font-family="${currentFontStyle.fontFamily}"
+              font-weight="${currentFontStyle.fontWeight}"
+              font-style="${currentFontStyle.italic ? "italic" : "normal"}"
               fill="${textColorMap[word.text]?.color || "#545454"}"
               filter="url(#text-shadow)"
             >
               ${word.text}
             </text>
-          `
-          )
+          `;
+          })
           .join("")}
       </g>
     </svg>
@@ -117,17 +119,19 @@ export default function StylePage() {
     ctx.fillRect(0, 0, width, height);
 
     words.forEach((word) => {
+      const currentFontStyle = {
+        ...globalFontStyle,
+        ...fontStyleMap[word.text],
+      };
       ctx.shadowColor = `rgba(${globalTextShadow.rgba.r},${
         globalTextShadow.rgba.g
       },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})`;
       ctx.shadowBlur = globalTextShadow.blur;
       ctx.shadowOffsetX = globalTextShadow.dx;
       ctx.shadowOffsetY = globalTextShadow.dy;
-      ctx.font = `${globalFontStyle.italic ? "italic" : ""} ${
-        globalFontStyle?.fontWeight || defaultFontStyle.fontWeight
-      } ${word.fontSize}px ${
-        globalFontStyle?.fontFamily || defaultFontStyle.fontFamily
-      }`;
+      ctx.font = `${currentFontStyle.italic ? "italic" : ""} ${
+        currentFontStyle.fontWeight
+      } ${word.fontSize}px ${currentFontStyle.fontFamily}`;
       ctx.fillStyle = textColorMap[word.text]?.color || "#545454";
       ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
       4;

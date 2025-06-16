@@ -20,11 +20,13 @@ export default function ColorPicker({
   onChange,
   onDelete,
   size = "30",
+  pickerLoc = { x: -80, y: 0 },
 }: {
   color: string;
   onChange: (newColor: string) => void;
   onDelete?: () => void;
   size?: string;
+  pickerLoc?: { x: number; y: number };
 }) {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
@@ -53,10 +55,12 @@ export default function ColorPicker({
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-[${size}px] h-[${size}px] rounded-full flex items-center justify-center transition relative cursor-pointer`}
+        className="rounded-full flex items-center justify-center transition relative cursor-pointer"
         style={{
           backgroundColor: color,
           border: "2px solid #545454",
+          width: `${size}px`,
+          height: `${size}px`,
         }}
       >
         {/* 中央icon */}
@@ -86,8 +90,17 @@ export default function ColorPicker({
 
       {/* color picker 彈出視窗 */}
       {open && (
-        <div className="absolute z-50 mt-2 translate-x-[-80%]">
+        <div
+          className={`absolute z-50 mt-2 translate-x-[${pickerLoc.x}%] translate-y-[${pickerLoc.y}]`}
+        >
           <ChromePicker
+            styles={{
+              default: {
+                picker: {
+                  width: "150px",
+                },
+              },
+            }}
             color={color}
             onChange={(colorResult) => onChange(colorResult.hex)}
             disableAlpha
