@@ -1,7 +1,7 @@
-import WordEditor from "./wordEditor";
+import SingleWordEditor from "./singleWordEditor";
 import { useWordCloudStore } from "@/app/lib/wordCloudStore";
 
-export default function IndividualEditPanel() {
+export default function SingleEditPanel() {
   const { segmentedWords, removedWords, selectionCount } = useWordCloudStore();
 
   const visibleWords = segmentedWords
@@ -12,7 +12,7 @@ export default function IndividualEditPanel() {
     <div className="outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
       <div className="overflow-y-auto flex flex-col gap-2 h-[414px]">
         {visibleWords.map((word, index) => (
-          <WordEditor text={word.text} key={index} />
+          <SingleWordEditor text={word.text} key={index} />
         ))}
       </div>
     </div>

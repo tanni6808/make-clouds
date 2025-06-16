@@ -41,9 +41,9 @@ type WordCloudState = {
   globalFontStyle: FontStyle;
   fontStyleMap: Record<string, Partial<FontStyle>>;
   setGlobalFontStyle: (style: Partial<FontStyle>) => void;
-  setIndividualFontStyle: (text: string, style: Partial<FontStyle>) => void;
+  setSingleFontStyle: (text: string, style: Partial<FontStyle>) => void;
   clearGlobalFontStyle: () => void;
-  clearIndividualFontStyle: (text: string) => void;
+  clearSingleFontStyle: (text: string) => void;
 
   defaultTextColor: string;
   textColorPalette: TextColorPaletteSlot[];
@@ -158,7 +158,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
         ...updates,
       },
     })),
-  setIndividualFontStyle: (text, style) => {
+  setSingleFontStyle: (text, style) => {
     const current = get().fontStyleMap[text] || {};
     set((state) => ({
       fontStyleMap: {
@@ -177,7 +177,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
         underline: false,
       },
     }),
-  clearIndividualFontStyle: (text) => {
+  clearSingleFontStyle: (text) => {
     set((state) => {
       const newMap = { ...state.fontStyleMap };
       delete newMap[text];

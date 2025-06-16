@@ -1,6 +1,6 @@
 "use client";
-import { IoMdEye } from "react-icons/io";
-import { IoMdEyeOff } from "react-icons/io";
+// import { IoMdEye } from "react-icons/io";
+// import { IoMdEyeOff } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
 import { FiPlusCircle } from "react-icons/fi";
@@ -11,11 +11,11 @@ import { FontStyle } from "@/app/lib/definitions";
 
 import { useState, useEffect } from "react";
 
-export default function WordEditor({ text }: { text: string }) {
+export default function SingleWordEditor({ text }: { text: string }) {
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
   const fontStyle = useWordCloudStore((s) => s.fontStyleMap[text]);
-  const setFontStyle = useWordCloudStore((s) => s.setIndividualFontStyle);
-  const delFontStyle = useWordCloudStore((s) => s.clearIndividualFontStyle);
+  const setFontStyle = useWordCloudStore((s) => s.setSingleFontStyle);
+  const delFontStyle = useWordCloudStore((s) => s.clearSingleFontStyle);
   const currentFontStyle = { ...globalFontStyle, ...fontStyle };
 
   const defaultTextColor = useWordCloudStore((s) => s.defaultTextColor);
@@ -32,7 +32,7 @@ export default function WordEditor({ text }: { text: string }) {
   const [addColorEditor, setAddColorEditor] = useState<boolean>(
     !!(textColor && !textColor.sourceSlotId)
   );
-  const [addShadowEditor, setAddShadowEditor] = useState<boolean>(false);
+  // const [addShadowEditor, setAddShadowEditor] = useState<boolean>(false);
 
   const handleFontChange = (value: string) => {
     const lastSpace = value.lastIndexOf(" ");
@@ -169,10 +169,10 @@ export default function WordEditor({ text }: { text: string }) {
                   />
                   <div className="grow">
                     <div className="p-1 rounded bg-gray-light flex flex-col items-center">
-                      <div className="text-xs">使用中</div>
+                      <div className="text-xs">樣式色盤</div>
                       <div className="flex gap-0.5">
                         {textColorPalette.length === 0 ? (
-                          <div className="text-primary-light">無</div>
+                          <div className="text-primary-light">無顏色紀錄</div>
                         ) : (
                           textColorPalette.map((c) => (
                             <div

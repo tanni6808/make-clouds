@@ -1,15 +1,15 @@
 "use client";
 import Button from "../components/button";
 import TabSwitcher from "../components/tabSwitcher";
-import GlobalEditPanel from "./component/globalEditPanel";
-import IndividualEditPanel from "./component/individualEditPanel";
+import GlobalEditPanel from "./components/globalEditPanel";
+import SingleEditPanel from "./components/singleEditPanel";
 import Canvas, { CanvasRef } from "../components/canvas";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 
 // import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-// import IndividualEditPanel from "../components/style/individualEditPanel";
+// import SingleEditPanel from "../components/style/SingleEditPanel";
 
 export default function StylePage() {
   const router = useRouter();
@@ -202,14 +202,14 @@ export default function StylePage() {
         <TabSwitcher
           tabs={[
             { label: "整體樣式", value: "global" },
-            { label: "個別樣式", value: "individual" },
+            { label: "個別樣式", value: "Single" },
           ]}
           current={currentEditTab}
           onChange={handelChangeEditTab}
           className="px-5"
         />
         {currentEditTab === "global" && <GlobalEditPanel />}
-        {currentEditTab === "individual" && <IndividualEditPanel />}
+        {currentEditTab === "Single" && <SingleEditPanel />}
         <div className="flex justify-between">
           <Button style="solid" className="px-5" onClick={handleDownloadSVG}>
             下載SVG

@@ -1,9 +1,9 @@
 "use client";
 import Button from "../components/button";
 import Canvas, { CanvasRef } from "../components/canvas";
-import TotalWordsPanel from "../components/composition/totalWordsPanel";
-import WordsList from "../components/composition/wordsList";
-import AddCustomWordPanel from "../components/composition/addCustomWordPanel";
+import TotalWordsPanel from "./components/totalWordsPanel";
+import WordsList from "./components/wordsList";
+import AddCustomWordPanel from "./components/addCustomWordPanel";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 import { generateWordList } from "../lib/wordCloudMethod";
 
