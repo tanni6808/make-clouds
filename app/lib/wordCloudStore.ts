@@ -42,8 +42,8 @@ type WordCloudState = {
   fontStyleMap: Record<string, Partial<FontStyle>>;
   setGlobalFontStyle: (style: Partial<FontStyle>) => void;
   setSingleFontStyle: (text: string, style: Partial<FontStyle>) => void;
-  clearGlobalFontStyle: () => void;
-  clearSingleFontStyle: (text: string) => void;
+  deleteGlobalFontStyle: () => void;
+  deleteSingleFontStyle: (text: string) => void;
 
   defaultTextColor: string;
   textColorPalette: TextColorPaletteSlot[];
@@ -63,10 +63,7 @@ type WordCloudState = {
   textShadowMap: Record<string, TextShadow>;
   setGlobalTextShadow: (shadow: Partial<TextShadow>) => void;
   setTextShadow: (text: string, shadow: TextShadow) => void;
-  // baseTextColor: string;
-  // setBaseTextColor: (color: string) => void;
-  // customColorScheme: string[];
-  // setCustomColorScheme: (colors: string[]) => void;
+  deleteSingleTextShadow: (text: string) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -137,12 +134,6 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
   },
 
   // 字型
-  // defaultFontStyle: {
-  //   fontFamily: "Noto sans TC",
-  //   fontWeight: "700",
-  //   italic: false,
-  //   underline: false,
-  // },
   globalFontStyle: {
     fontFamily: "Noto sans TC",
     fontWeight: "700",
@@ -168,7 +159,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
     }));
   },
 
-  clearGlobalFontStyle: () =>
+  deleteGlobalFontStyle: () =>
     set({
       globalFontStyle: {
         fontFamily: "Noto sans TC",
@@ -177,7 +168,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
         underline: false,
       },
     }),
-  clearSingleFontStyle: (text) => {
+  deleteSingleFontStyle: (text) => {
     set((state) => {
       const newMap = { ...state.fontStyleMap };
       delete newMap[text];
@@ -265,16 +256,6 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
       return;
     }
 
-    // words.forEach((word) => {
-    //   const randomColor =
-    //     colorList[Math.floor(Math.random() * colorList.length)];
-    //   map[word.text] = {
-    //     color: randomColor.color,
-    //     sourceSlotId: randomColor.id,
-    //   };
-    // });
-
-    // set({ textColorMap: map });
     const newMap: Record<string, TextColor> = { ...get().textColorMap };
 
     words.forEach((word) => {
@@ -316,25 +297,11 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
       },
     }));
   },
-  // baseTextColor: "#545454",
-  // setBaseTextColor: (color) => set({ baseTextColor: color }),
-  // setColorScheme: (mode: string) => set({ schemeMode: mode }),
-  // customColorScheme: [],
-  // setCustomColorScheme: (colors: string[]) => {
-  //   const { getSelectedWords, baseTextColor } = get();
-  //   const words = getSelectedWords();
-  //   const textColorMap: Record<string, TextColor> = {};
-  //   const colorList = [baseTextColor, ...colors];
-
-  //   words.forEach((word, i) => {
-  //     const color = colorList[i % colorList.length];
-  //     textColorMap[word.text] = { color, isCustom: false };
-  //   });
-
-  //   set({
-  //     customColorScheme: colors,
-  //     schemeMode: "custom",
-  //     textColorMap,
-  //   });
-  // },
+  deleteSingleTextShadow: (text: string) => {
+    set((state) => {
+      const newMap = { ...state.textShadowMap };
+      delete newMap[text];
+      return { textShadowMap: newMap };
+    });
+  },
 }));

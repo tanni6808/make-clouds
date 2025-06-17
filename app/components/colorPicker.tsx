@@ -91,7 +91,8 @@ export default function ColorPicker({
       {/* color picker 彈出視窗 */}
       {open && (
         <div
-          className={`absolute z-50 mt-2 translate-x-[${pickerLoc.x}%] translate-y-[${pickerLoc.y}]`}
+          className="absolute z-50 mt-2"
+          style={{ transform: `translate(${pickerLoc.x}%, ${pickerLoc.y}%)` }}
         >
           <ChromePicker
             styles={{
@@ -114,13 +115,16 @@ export default function ColorPicker({
 export function ColorAndAlphaPicker({
   rgba,
   onChange,
+  width = 76,
+  pickerLoc = { x: -80, y: -120 },
 }: {
   rgba: RGBAColor;
   onChange: (newColor: RGBAColor) => void;
+  width?: number;
+  pickerLoc?: { x: number; y: number };
 }) {
   const [open, setOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
-  const rgbColor = { r: rgba.r, g: rgba.g, b: rgba.b };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -145,14 +149,27 @@ export function ColorAndAlphaPicker({
           className="rounded-full border-2 w-[20px] h-[20px] mx-2"
           style={{ backgroundColor: `rgb(${rgba.r},${rgba.g},${rgba.b})` }}
         ></div>
-        <div className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3 w-19">
+        <div
+          className="text-sm flex justify-end items-center border-l-2 border-gray-dark px-3"
+          style={{ width: `${width}px` }}
+        >
           <div className="">{rgba.a ? Math.floor(rgba.a * 100) : 0}</div>
           <div className="">％</div>
         </div>
       </div>
       {open && (
-        <div className="absolute z-50 mt-2 translate-x-[-80%] translate-y-[-120%]">
+        <div
+          className="absolute z-50 mt-2"
+          style={{ transform: `translate(${pickerLoc.x}%, ${pickerLoc.y}%)` }}
+        >
           <ChromePicker
+            styles={{
+              default: {
+                picker: {
+                  width: "150px",
+                },
+              },
+            }}
             color={rgba}
             onChange={(colorResult) => onChange(colorResult.rgb)}
           />

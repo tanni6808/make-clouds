@@ -20,6 +20,7 @@ export default function StylePage() {
   const { textColorPalette, textColorMap, schemeMode, setColorSchemes } =
     useWordCloudStore();
   const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
+  const textShadowMap = useWordCloudStore((s) => s.textShadowMap);
   const canvasRef = useRef<CanvasRef>(null);
   const [currentEditTab, setCurrentEditTab] = useState<string>("global");
   const handleRegenerateWordCloud = () => {
@@ -40,22 +41,43 @@ export default function StylePage() {
     const maxX = Math.max(...words.map((w) => w.x + w.width));
     const minY = Math.min(...words.map((w) => w.y - w.height));
     const maxY = Math.max(...words.map((w) => w.y));
-
     const width = maxX - minX + padding * 2;
     const height = maxY - minY + padding * 2;
+
+    const filterDefs: string[] = [];
+    const wordFilterMap: Record<string, string> = {};
+
+    // global shadow filter
+    filterDefs.push(`<filter id="text-shadow-global" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
+      globalTextShadow.dx
+    }" dy="${globalTextShadow.dy}" stdDeviation="${
+      globalTextShadow.blur / 2
+    }" flood-color="rgba(${globalTextShadow.rgba.r},${
+      globalTextShadow.rgba.g
+    },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})" />
+        </filter>`);
+
+    // single shadow filter
+    Object.entries(textShadowMap).forEach(([text, shadow], index) => {
+      const filterId = `text-shadow-${index}`;
+      wordFilterMap[text] = filterId;
+
+      filterDefs.push(`
+        <filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
+        shadow.dx
+      }" dy="${shadow.dy}" stdDeviation="${
+        shadow.blur / 2
+      }" flood-color="rgba(${shadow.rgba.r},${shadow.rgba.g},${shadow.rgba.b},${
+        shadow.rgba.a || 0
+      })" />
+        </filter>
+        `);
+    });
 
     const svgContent = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
       <defs>
-        <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="${globalTextShadow.dx}" dy="${
-      globalTextShadow.dy
-    }" stdDeviation="${globalTextShadow.blur / 2}" flood-color="rgba(${
-      globalTextShadow.rgba.r
-    },${globalTextShadow.rgba.g},${globalTextShadow.rgba.b},${
-      globalTextShadow.rgba.a || 0
-    })" />
-        </filter>
+        ${filterDefs.join("\n")}
       </defs>
       <g>
         ${words
@@ -64,6 +86,7 @@ export default function StylePage() {
               ...globalFontStyle,
               ...fontStyleMap[word.text],
             };
+            const filterId = wordFilterMap[word.text] || "text-shadow-global";
             return `
             <text
               x="${word.x - minX + padding}"
@@ -73,7 +96,7 @@ export default function StylePage() {
               font-weight="${currentFontStyle.fontWeight}"
               font-style="${currentFontStyle.italic ? "italic" : "normal"}"
               fill="${textColorMap[word.text]?.color || "#545454"}"
-              filter="url(#text-shadow)"
+              filter="url(#${filterId})"
             >
               ${word.text}
             </text>
@@ -123,12 +146,16 @@ export default function StylePage() {
         ...globalFontStyle,
         ...fontStyleMap[word.text],
       };
-      ctx.shadowColor = `rgba(${globalTextShadow.rgba.r},${
-        globalTextShadow.rgba.g
-      },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})`;
-      ctx.shadowBlur = globalTextShadow.blur;
-      ctx.shadowOffsetX = globalTextShadow.dx;
-      ctx.shadowOffsetY = globalTextShadow.dy;
+      const currentTextShadow = {
+        ...globalTextShadow,
+        ...textShadowMap[word.text],
+      };
+      ctx.shadowColor = `rgba(${currentTextShadow.rgba.r},${
+        currentTextShadow.rgba.g
+      },${currentTextShadow.rgba.b},${currentTextShadow.rgba.a || 0})`;
+      ctx.shadowBlur = currentTextShadow.blur;
+      ctx.shadowOffsetX = currentTextShadow.dx;
+      ctx.shadowOffsetY = currentTextShadow.dy;
       ctx.font = `${currentFontStyle.italic ? "italic" : ""} ${
         currentFontStyle.fontWeight
       } ${word.fontSize}px ${currentFontStyle.fontFamily}`;

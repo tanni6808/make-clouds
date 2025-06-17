@@ -3,11 +3,13 @@ export default function Counter({
   max,
   min,
   onChange,
+  width = 56,
 }: {
   value: number;
   max: number;
   min: number;
   onChange: (count: number) => void;
+  width?: number;
 }) {
   const handleClick = (delta: number) => {
     const next = value + delta;
@@ -24,7 +26,9 @@ export default function Counter({
       >
         －
       </button>
-      <div className="w-14 text-center">{value}</div>
+      <div className="text-center" style={{ width: `${width}px` }}>
+        {value}
+      </div>
       <button
         className="bg-primary-dark rounded text-white px-1 transition hover:bg-primary-light active:bg-black cursor-pointer disabled:bg-gray-dark disabled:cursor-default"
         onClick={() => handleClick(+1)}

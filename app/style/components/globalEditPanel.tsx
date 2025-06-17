@@ -299,7 +299,7 @@ export default function GlobalEditPanel() {
         {currentColorEditTab === "shadow" && (
           <div className="mt-2 flex flex-col ">
             <div className="my-1">
-              {/* <ul className="flex items-center gap-1">
+              {/* // TODO <ul className="flex items-center gap-1">
                 <li className="px-0.5 mx-0.5 rounded-xl outline-3">全部</li>
                 <li className="border-2 rounded-[50%] p-0.5 w-[20px] h-[20px] mx-0.5 bg-red  outline-3 outline-offset-2 "></li>
                 <li className="border-2 rounded-[50%] p-0.5 w-[20px] h-[20px] mx-0.5 bg-red  outline-3 outline-offset-2 "></li>
