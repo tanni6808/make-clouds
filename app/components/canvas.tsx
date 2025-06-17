@@ -7,10 +7,11 @@ import {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { Transform, WordComposition } from "../lib/definitions";
+import { SegmentedWord, Transform, WordComposition } from "../lib/definitions";
 import Button from "./button";
 import { useWordCloudStore } from "../lib/wordCloudStore";
 import { generateWordCloud } from "../lib/wordCloudMethod";
+import { FaCompressArrowsAlt } from "react-icons/fa";
 
 export interface CanvasRef {
   regenerate: () => void;
@@ -66,7 +67,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     getSelectedWords,
     setComposition,
   } = useWordCloudStore();
-  const shouldGenerate = pathname === "/composition";
 
   // Methods
   function resetCanvasPosition(animation = true) {
@@ -223,19 +223,64 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   }, []);
 
   // 畫文字雲
+  const hasGeneratedRef = useRef(false);
+  const lastDepsRef = useRef<{
+    segmentedWords: SegmentedWord[];
+    removedWords: SegmentedWord[];
+    selectionCount: number;
+  } | null>(null);
   useEffect(() => {
-    if (!shouldGenerate) return; //resetCanvasPosition();
-    if (!svgRef.current || !groupRef.current) return;
+    if (pathname !== "/composition") {
+      // in style page, only reset canvas position
+      requestAnimationFrame(() => {
+        resetCanvasPosition();
+      });
+      return;
+    }
+    const selectedWords = getSelectedWords();
+    if (!svgRef.current || !groupRef.current) {
+      console.log("no svg or group ref");
+      return;
+    }
+    console.log("has svg and group ref");
     const svgEl = svgRef.current;
     const width = svgEl.clientWidth;
     const height = svgEl.clientHeight;
 
-    if (!width || !height) return;
+    if (!width || !height || selectedWords.length === 0) {
+      console.log("no place or material to draw");
+      return;
+    }
+    console.log("has place and materials to draw");
 
-    const selectedWords = getSelectedWords();
-    if (selectedWords.length === 0) return;
+    const currentDeps = {
+      segmentedWords,
+      removedWords,
+      selectionCount,
+    };
+
+    const depsChanged = (() => {
+      const last = lastDepsRef.current;
+      if (!last) return true;
+      return (
+        last.selectionCount !== currentDeps.selectionCount ||
+        last.removedWords.join(",") !== currentDeps.removedWords.join(",") ||
+        last.segmentedWords.map((w) => w.text).join(",") !==
+          currentDeps.segmentedWords.map((w) => w.text).join(",")
+      );
+    })();
+
+    if (hasGeneratedRef.current && !depsChanged) {
+      console.log(`draw once, no change, do not regenerate`);
+      return;
+    }
+    console.log("pass all test, start regenerate");
+
     const wordCloudComposition = generateWordCloud(selectedWords, svgEl);
     setComposition(wordCloudComposition);
+
+    hasGeneratedRef.current = true;
+    lastDepsRef.current = currentDeps;
 
     requestAnimationFrame(() => {
       resetCanvasPosition();
@@ -315,7 +360,10 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
         className="absolute z-10 right-[10px] bottom-[10px] px-4 "
         onClick={() => resetCanvasPosition(true)}
       >
-        重置畫布縮放
+        <div className="flex items-center">
+          <FaCompressArrowsAlt />
+          <div className="pl-2">重製畫布縮放</div>
+        </div>
       </Button>
     </div>
   );

@@ -5,11 +5,11 @@ import GlobalEditPanel from "./components/globalEditPanel";
 import SingleEditPanel from "./components/singleEditPanel";
 import Canvas, { CanvasRef } from "../components/canvas";
 import { useWordCloudStore } from "../lib/wordCloudStore";
+import { FaArrowRotateLeft } from "react-icons/fa6";
 
 // import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-// import SingleEditPanel from "../components/style/SingleEditPanel";
 
 export default function StylePage() {
   const router = useRouter();
@@ -224,7 +224,10 @@ export default function StylePage() {
       </div>
       <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
         <Button style="hollow" onClick={handleRegenerateWordCloud}>
-          重新隨機排列詞彙
+          <div className="flex justify-center items-center">
+            <FaArrowRotateLeft />
+            <div className="pl-2">重新隨機排列詞彙</div>
+          </div>
         </Button>
         <TabSwitcher
           tabs={[

@@ -13,7 +13,8 @@ export default function Button({
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
 }) {
-  const baseClass = "rounded-lg py-2 transition cursor-pointer inline-block";
+  const baseClass =
+    "rounded-lg py-2 transition cursor-pointer inline-block active:bg-black";
   const solidClass = "bg-primary-dark text-white hover:bg-primary-light";
   const hollowClass =
     "bg-white outline outline-4 outline-primary-dark outline-offset-[-4px] hover:bg-primary-dark hover:text-white";
