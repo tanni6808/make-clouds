@@ -21,6 +21,7 @@ export default function Canvas() {
   const setDownloadPNG = useCanvasStore((s) => s.setDownloadPNG);
 
   //SEC 控制畫布
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
     translateX: 0,
     translateY: 0,
@@ -468,6 +469,22 @@ export default function Canvas() {
           ref={groupRef}
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
         >
+          {hoverIndex !== null && (
+            <rect
+              x={composition[hoverIndex].x}
+              y={
+                composition[hoverIndex].y -
+                composition[hoverIndex].fontSize * 1.1
+              }
+              width={composition[hoverIndex].width}
+              height={composition[hoverIndex].height}
+              fill="none"
+              stroke="#f00"
+              strokeDasharray="4"
+              strokeWidth={2}
+              pointerEvents="none"
+            />
+          )}
           {composition.map((word, index) => {
             const currentFontStyle = {
               ...globalFontStyle,
@@ -499,6 +516,8 @@ export default function Canvas() {
                 className={`${
                   dragState.index ? "cursor-grabbing" : "cursor-grab"
                 }`}
+                onMouseEnter={() => setHoverIndex(index)}
+                onMouseLeave={() => setHoverIndex(null)}
               >
                 {word.text}
               </text>
