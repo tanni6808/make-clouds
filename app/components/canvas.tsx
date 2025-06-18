@@ -449,7 +449,7 @@ export default function Canvas() {
   // SEC 在composition page清空style map
   useEffect(() => {
     if (pathname === "/composition") {
-      useWordCloudStore.getState().clearStyleMaps();
+      useWordCloudStore.getState().resetStyleMaps();
     }
   }, [pathname]);
 

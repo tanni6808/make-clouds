@@ -36,6 +36,8 @@ type WordCloudState = {
   setComposition: (words: WordComposition[]) => void;
   updateWordPosition: (text: string, x: number, y: number) => void;
 
+  resetWordCloudCompositionSetting: () => void;
+
   // 階段三: 字型、顏色
   // defaultFontStyle: FontStyle;
   globalFontStyle: FontStyle;
@@ -65,7 +67,7 @@ type WordCloudState = {
   setTextShadow: (text: string, shadow: TextShadow) => void;
   deleteSingleTextShadow: (text: string) => void;
 
-  clearStyleMaps: () => void;
+  resetStyleMaps: () => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -132,6 +134,15 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
       composition: get().composition.map((w) =>
         w.text === text ? { ...w, x, y } : w
       ),
+    });
+  },
+  resetWordCloudCompositionSetting: () => {
+    set({
+      customWords: [],
+      segmentedWords: [],
+      removedWords: [],
+      selectionCount: 50,
+      composition: [],
     });
   },
 
@@ -306,7 +317,7 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
       return { textShadowMap: newMap };
     });
   },
-  clearStyleMaps: () => {
+  resetStyleMaps: () => {
     set({
       fontStyleMap: {},
       globalFontStyle: {

@@ -25,10 +25,7 @@ export default function StylePage() {
   };
 
   useEffect(() => {
-    if (composition.length === 0) {
-      // TODO 初始化
-      return router.push("/");
-    }
+    if (composition.length === 0) return router.push("/");
   }, []);
 
   useEffect(() => {

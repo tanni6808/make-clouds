@@ -37,10 +37,7 @@ export default function CompositionPage() {
 
   // 進行斷詞
   useEffect(() => {
-    if (article === "") {
-      // TODO 初始化
-      return router.push("/");
-    }
+    if (article === "") return router.push("/");
     if (stopwords.size === 0) return;
     const result = generateWordList(customWords, article, stopwords);
     setSegmentedWords(result);

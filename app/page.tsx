@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { useWordCloudStore } from "./lib/useWordCloudStore";
 import { useRouter } from "next/navigation";
 import Button from "./components/button";
@@ -16,6 +17,10 @@ export default function Home() {
     if (article === "") return alert("請輸入文章，或載入範例文章後再開始。");
     router.push("/composition");
   };
+  // 重置文字雲相關設定
+  useEffect(() => {
+    useWordCloudStore.getState().resetWordCloudCompositionSetting();
+  }, []);
   return (
     <form
       className="flex flex-col items-center"
