@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 function IndexHeader() {
   const handleStart = () => {
     const textareaEl = document.getElementById("textarea");
-    textareaEl?.scrollIntoView({ behavior: "smooth" });
+    textareaEl?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   return (
     <header className="h-[640px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10">

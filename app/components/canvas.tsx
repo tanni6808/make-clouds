@@ -1,30 +1,26 @@
 "use client";
 import { usePathname } from "next/navigation";
-import {
-  useState,
-  useEffect,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
-import { SegmentedWord, Transform, WordComposition } from "../lib/definitions";
+import { useState, useEffect, useRef } from "react";
+import { SegmentedWord, Transform } from "../lib/definitions";
 import Button from "./button";
-import { useWordCloudStore } from "../lib/wordCloudStore";
+import { useWordCloudStore } from "../lib/useWordCloudStore";
+import { useCanvasStore } from "../lib/useCanvasStore";
 import { generateWordCloud } from "../lib/wordCloudMethod";
 import { FaCompressArrowsAlt } from "react-icons/fa";
 
-export interface CanvasRef {
-  regenerate: () => void;
-  getSvgRef: () => SVGSVGElement | null;
-  getWordComposition: () => WordComposition[];
-}
-
-interface CanvasProps {}
-
-function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
+export default function Canvas() {
   const pathname = usePathname();
 
-  // States for canvas manipulating
+  //SEC useCanvasStore
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const setCanvasSVGRef = useCanvasStore((s) => s.setCanvasSVGRef);
+  const groupRef = useRef<SVGGElement | null>(null);
+  const setCanvasGRef = useCanvasStore((s) => s.setCanvasGRef);
+  const setTriggerRegenerate = useCanvasStore((s) => s.setTriggerRegenerate);
+  const setDownloadSVG = useCanvasStore((s) => s.setDownloadSVG);
+  const setDownloadPNG = useCanvasStore((s) => s.setDownloadPNG);
+
+  //SEC 控制畫布
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
     translateX: 0,
     translateY: 0,
@@ -42,33 +38,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // States for word cloud drawing
-  const svgRef = useRef<SVGSVGElement>(null);
-  const groupRef = useRef<SVGGElement>(null);
-
-  // Status for styles
-  const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
-  const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
-
-  // Status for colors
-  const textColorMap = useWordCloudStore((s) => s.textColorMap);
-  const defaultTextColor = useWordCloudStore((s) => s.defaultTextColor);
-
-  // Status for Shadow
-  const textShadowMap = useWordCloudStore((s) => s.textShadowMap);
-  const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
-
-  // Word cloud store
-  const {
-    segmentedWords,
-    removedWords,
-    selectionCount,
-    composition,
-    getSelectedWords,
-    setComposition,
-  } = useWordCloudStore();
-
-  // Methods
   function resetCanvasPosition(animation = true) {
     if (!svgRef.current || !groupRef.current) return;
     const svg = svgRef.current;
@@ -90,7 +59,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
       setCanvasTransform(to);
     }
   }
-
   function animateCanvasTransform(
     from: Transform,
     to: Transform,
@@ -121,8 +89,6 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     const mouseY = (event.clientY - CTM.f) / CTM.d;
     return { x: mouseX, y: mouseY };
   }
-
-  // Mouse event handlers
   const handleTextMouseDown = (
     event: React.MouseEvent<SVGTextElement>,
     index: number
@@ -178,7 +144,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
 
   const handleMouseUp = () => {
     // if (dragState.index !== null) {
-    //   // for undo/redo
+    //   // TODO undo/redo
     // }
     setDragState({ index: null, offsetX: 0, offsetY: 0 });
     setIsPanning(false);
@@ -222,7 +188,22 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     };
   }, []);
 
-  // 畫文字雲
+  //SEC 文字雲繪製
+  const {
+    segmentedWords,
+    removedWords,
+    selectionCount,
+    composition,
+    getSelectedWords,
+    setComposition,
+  } = useWordCloudStore();
+  const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
+  const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
+  const textColorMap = useWordCloudStore((s) => s.textColorMap);
+  const defaultTextColor = useWordCloudStore((s) => s.defaultTextColor);
+  const textShadowMap = useWordCloudStore((s) => s.textShadowMap);
+  const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
+  // 生成新的
   const hasGeneratedRef = useRef(false);
   const lastDepsRef = useRef<{
     segmentedWords: SegmentedWord[];
@@ -230,14 +211,8 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     selectionCount: number;
   } | null>(null);
   useEffect(() => {
-    if (pathname !== "/composition") {
-      // in style page, only reset canvas position
-      requestAnimationFrame(() => {
-        resetCanvasPosition();
-      });
-      return;
-    }
-    const selectedWords = getSelectedWords();
+    if (pathname !== "/composition") return;
+
     if (!svgRef.current || !groupRef.current) {
       console.log("no svg or group ref");
       return;
@@ -246,6 +221,7 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     const svgEl = svgRef.current;
     const width = svgEl.clientWidth;
     const height = svgEl.clientHeight;
+    const selectedWords = getSelectedWords();
 
     if (!width || !height || selectedWords.length === 0) {
       console.log("no place or material to draw");
@@ -285,24 +261,197 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
     requestAnimationFrame(() => {
       resetCanvasPosition();
     });
-    // TODO 只用selectedWord這個狀態控制繪製(可能需要大改🫠)
   }, [segmentedWords, removedWords, selectionCount]);
+  // 重畫
+  function regenerateWordCloud() {
+    if (!svgRef.current || !groupRef.current) return;
+    const svgEl = svgRef.current;
+    const selectedWords = getSelectedWords();
+    const wordCloudComposition = generateWordCloud(selectedWords, svgEl);
+    setComposition(wordCloudComposition);
+    requestAnimationFrame(() => {
+      resetCanvasPosition();
+    });
+  }
 
-  // 重畫文字雲
-  useImperativeHandle(ref, () => ({
-    regenerate: () => {
-      if (!svgRef.current || !groupRef.current) return;
-      const svgEl = svgRef.current;
-      const selectedWords = getSelectedWords();
-      const wordCloudComposition = generateWordCloud(selectedWords, svgEl);
-      setComposition(wordCloudComposition);
-      requestAnimationFrame(() => {
-        resetCanvasPosition();
-      });
-    },
-    getSvgRef: () => svgRef.current,
-    getWordComposition: () => composition,
-  }));
+  // SEC 下載
+  // SVG檔案
+  function downloadSVG() {
+    const words = useWordCloudStore.getState().composition;
+    if (!words || words.length === 0) return;
+    const {
+      fontStyleMap,
+      textColorMap,
+      textShadowMap,
+      globalFontStyle,
+      globalTextShadow,
+    } = useWordCloudStore.getState();
+
+    const padding = 50;
+    const minX = Math.min(...words.map((w) => w.x));
+    const maxX = Math.max(...words.map((w) => w.x + w.width));
+    const minY = Math.min(...words.map((w) => w.y - w.height));
+    const maxY = Math.max(...words.map((w) => w.y));
+    const width = maxX - minX + padding * 2;
+    const height = maxY - minY + padding * 2;
+
+    const filterDefs: string[] = [];
+    const wordFilterMap: Record<string, string> = {};
+
+    // global shadow filter
+    filterDefs.push(`<filter id="text-shadow-global" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
+      globalTextShadow.dx
+    }" dy="${globalTextShadow.dy}" stdDeviation="${
+      globalTextShadow.blur / 2
+    }" flood-color="rgba(${globalTextShadow.rgba.r},${
+      globalTextShadow.rgba.g
+    },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})" />
+        </filter>`);
+
+    // single shadow filter
+    Object.entries(textShadowMap).forEach(([text, shadow], index) => {
+      const filterId = `text-shadow-${index}`;
+      wordFilterMap[text] = filterId;
+
+      filterDefs.push(`
+        <filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
+        shadow.dx
+      }" dy="${shadow.dy}" stdDeviation="${
+        shadow.blur / 2
+      }" flood-color="rgba(${shadow.rgba.r},${shadow.rgba.g},${shadow.rgba.b},${
+        shadow.rgba.a || 0
+      })" />
+        </filter>
+        `);
+    });
+
+    const svgContent = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <defs>
+        ${filterDefs.join("\n")}
+      </defs>
+      <g>
+        ${words
+          .map((word) => {
+            const currentFontStyle = {
+              ...globalFontStyle,
+              ...fontStyleMap[word.text],
+            };
+            const filterId = wordFilterMap[word.text] || "text-shadow-global";
+            return `
+            <text
+              x="${word.x - minX + padding}"
+              y="${word.y - minY + padding}"
+              font-size="${word.fontSize}"
+              font-family="${currentFontStyle.fontFamily}"
+              font-weight="${currentFontStyle.fontWeight}"
+              font-style="${currentFontStyle.italic ? "italic" : "normal"}"
+              fill="${textColorMap[word.text]?.color || "#545454"}"
+              filter="url(#${filterId})"
+            >
+              ${word.text}
+            </text>
+          `;
+          })
+          .join("")}
+      </g>
+    </svg>`;
+
+    const blob = new Blob([svgContent], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "wordcloud.svg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+  // PNG檔案
+  function downloadPNG() {
+    const words = useWordCloudStore.getState().composition;
+    if (!words || words.length === 0) return;
+
+    const {
+      fontStyleMap,
+      textColorMap,
+      textShadowMap,
+      globalFontStyle,
+      globalTextShadow,
+    } = useWordCloudStore.getState();
+
+    const padding = 50;
+    const minX = Math.min(...words.map((w) => w.x));
+    const maxX = Math.max(...words.map((w) => w.x + w.width));
+    const minY = Math.min(...words.map((w) => w.y - w.height));
+    const maxY = Math.max(...words.map((w) => w.y));
+    const width = maxX - minX + padding * 2;
+    const height = maxY - minY + padding * 2;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.fillStyle = "rgb(255 255 255 / 0%)"; // "rgb(255 255 255)";
+    ctx.fillRect(0, 0, width, height);
+
+    words.forEach((word) => {
+      const currentFontStyle = {
+        ...globalFontStyle,
+        ...fontStyleMap[word.text],
+      };
+      const currentTextShadow = {
+        ...globalTextShadow,
+        ...textShadowMap[word.text],
+      };
+      ctx.shadowColor = `rgba(${currentTextShadow.rgba.r},${
+        currentTextShadow.rgba.g
+      },${currentTextShadow.rgba.b},${currentTextShadow.rgba.a || 0})`;
+      ctx.shadowBlur = currentTextShadow.blur;
+      ctx.shadowOffsetX = currentTextShadow.dx;
+      ctx.shadowOffsetY = currentTextShadow.dy;
+      ctx.font = `${currentFontStyle.italic ? "italic" : ""} ${
+        currentFontStyle.fontWeight
+      } ${word.fontSize}px ${currentFontStyle.fontFamily}`;
+      ctx.fillStyle = textColorMap[word.text]?.color || "#545454";
+      ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
+      4;
+    });
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "wordcloud.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // SEC 將canvas variables & methods傳至useCanvasStore供外部取用
+  useEffect(() => {
+    setCanvasSVGRef(svgRef.current);
+    setCanvasGRef(groupRef.current);
+    setTriggerRegenerate(regenerateWordCloud);
+
+    setDownloadSVG(downloadSVG);
+
+    setDownloadPNG(downloadPNG);
+  }, []);
+
+  // SEC 在composition page清空style map
+  useEffect(() => {
+    if (pathname === "/composition") {
+      useWordCloudStore.getState().clearStyleMaps();
+    }
+  }, [pathname]);
 
   return (
     <div className="h-full outline-4 outline-primary-dark outline-offset-[-4px] rounded-2xl relative">
@@ -335,11 +484,13 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
                 fontWeight={currentFontStyle.fontWeight}
                 fontStyle={currentFontStyle.italic ? "italic" : "normal"}
                 style={{
-                  textShadow: `${textShadow.dx}px ${textShadow.dy}px ${
-                    textShadow.blur
-                  }px rgba(${textShadow.rgba.r},${textShadow.rgba.g},${
-                    textShadow.rgba.b
-                  },${textShadow.rgba.a ? textShadow.rgba.a : 0})`,
+                  textShadow: `${textShadow.dx * canvasTransform.scale}px ${
+                    textShadow.dy * canvasTransform.scale
+                  }px ${textShadow.blur}px rgba(${textShadow.rgba.r},${
+                    textShadow.rgba.g
+                  },${textShadow.rgba.b},${
+                    textShadow.rgba.a ? textShadow.rgba.a : 0
+                  })`,
                 }}
                 fill={textColorMap[word.text]?.color || defaultTextColor}
                 onMouseDown={(e) => {
@@ -362,11 +513,9 @@ function Canvas(_: CanvasProps, ref: React.Ref<CanvasRef>) {
       >
         <div className="flex items-center">
           <FaCompressArrowsAlt />
-          <div className="pl-2">重製畫布縮放</div>
+          <div className="pl-2">重置畫布縮放</div>
         </div>
       </Button>
     </div>
   );
 }
-
-export default forwardRef<CanvasRef, CanvasProps>(Canvas);

@@ -12,7 +12,7 @@ import TabSwitcher from "@/app/components/tabSwitcher";
 import { Dropdown } from "@/app/components/dropdown";
 import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import { FontDropdown } from "@/app/components/dropdown";
-import { useWordCloudStore } from "@/app/lib/wordCloudStore";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 import { useState, useEffect } from "react";
 

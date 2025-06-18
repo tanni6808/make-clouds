@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_TC } from "next/font/google";
 import "./globals.css";
-import Header from "./components/header";
-import Workspace from "./components/workspace";
-import Footer from "./components/footer";
+import LayoutWrapper from "./components/layoutWrapper";
 
 const notoSansTC = Noto_Sans_TC({
   weight: "700",
@@ -23,11 +21,7 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant">
       <body className={`${notoSansTC.className} antialiased`}>
-        <div className="w-[1200px] mx-auto">
-          <Header />
-          <Workspace>{children}</Workspace>
-          <Footer />
-        </div>
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

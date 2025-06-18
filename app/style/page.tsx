@@ -3,179 +3,27 @@ import Button from "../components/button";
 import TabSwitcher from "../components/tabSwitcher";
 import GlobalEditPanel from "./components/globalEditPanel";
 import SingleEditPanel from "./components/singleEditPanel";
-import Canvas, { CanvasRef } from "../components/canvas";
-import { useWordCloudStore } from "../lib/wordCloudStore";
+import { useWordCloudStore } from "../lib/useWordCloudStore";
+import { useCanvasStore } from "../lib/useCanvasStore";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 
 // import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function StylePage() {
   const router = useRouter();
+  const triggerRegenerate = useCanvasStore((s) => s.triggerRegenerate);
+  const downloadSVG = useCanvasStore((s) => s.downloadSVG);
+  const downloadPNG = useCanvasStore((s) => s.downloadPNG);
   const composition = useWordCloudStore((s) => s.composition);
-  // const defaultFontStyle = useWordCloudStore((s) => s.defaultFontStyle);
-  const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
-  const fontStyleMap = useWordCloudStore((s) => s.fontStyleMap);
-  const { textColorPalette, textColorMap, schemeMode, setColorSchemes } =
-    useWordCloudStore();
-  const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
-  const textShadowMap = useWordCloudStore((s) => s.textShadowMap);
-  const canvasRef = useRef<CanvasRef>(null);
+  const { textColorPalette, schemeMode, setColorSchemes } = useWordCloudStore();
   const [currentEditTab, setCurrentEditTab] = useState<string>("global");
-  const handleRegenerateWordCloud = () => {
-    canvasRef.current?.regenerate();
-  };
 
   const handelChangeEditTab = (value: string) => {
     setCurrentEditTab(value);
   };
 
-  const handleDownloadSVG = () => {
-    const words = canvasRef.current?.getWordComposition();
-    if (!words || words.length === 0) return;
-
-    // 計算 SVG 寬高
-    const padding = 50;
-    const minX = Math.min(...words.map((w) => w.x));
-    const maxX = Math.max(...words.map((w) => w.x + w.width));
-    const minY = Math.min(...words.map((w) => w.y - w.height));
-    const maxY = Math.max(...words.map((w) => w.y));
-    const width = maxX - minX + padding * 2;
-    const height = maxY - minY + padding * 2;
-
-    const filterDefs: string[] = [];
-    const wordFilterMap: Record<string, string> = {};
-
-    // global shadow filter
-    filterDefs.push(`<filter id="text-shadow-global" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
-      globalTextShadow.dx
-    }" dy="${globalTextShadow.dy}" stdDeviation="${
-      globalTextShadow.blur / 2
-    }" flood-color="rgba(${globalTextShadow.rgba.r},${
-      globalTextShadow.rgba.g
-    },${globalTextShadow.rgba.b},${globalTextShadow.rgba.a || 0})" />
-        </filter>`);
-
-    // single shadow filter
-    Object.entries(textShadowMap).forEach(([text, shadow], index) => {
-      const filterId = `text-shadow-${index}`;
-      wordFilterMap[text] = filterId;
-
-      filterDefs.push(`
-        <filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${
-        shadow.dx
-      }" dy="${shadow.dy}" stdDeviation="${
-        shadow.blur / 2
-      }" flood-color="rgba(${shadow.rgba.r},${shadow.rgba.g},${shadow.rgba.b},${
-        shadow.rgba.a || 0
-      })" />
-        </filter>
-        `);
-    });
-
-    const svgContent = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-      <defs>
-        ${filterDefs.join("\n")}
-      </defs>
-      <g>
-        ${words
-          .map((word) => {
-            const currentFontStyle = {
-              ...globalFontStyle,
-              ...fontStyleMap[word.text],
-            };
-            const filterId = wordFilterMap[word.text] || "text-shadow-global";
-            return `
-            <text
-              x="${word.x - minX + padding}"
-              y="${word.y - minY + padding}"
-              font-size="${word.fontSize}"
-              font-family="${currentFontStyle.fontFamily}"
-              font-weight="${currentFontStyle.fontWeight}"
-              font-style="${currentFontStyle.italic ? "italic" : "normal"}"
-              fill="${textColorMap[word.text]?.color || "#545454"}"
-              filter="url(#${filterId})"
-            >
-              ${word.text}
-            </text>
-          `;
-          })
-          .join("")}
-      </g>
-    </svg>
-  `;
-
-    const blob = new Blob([svgContent], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "wordcloud.svg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  const handleDownloadPNG = () => {
-    const words = canvasRef.current?.getWordComposition();
-    if (!words || words.length === 0) return;
-
-    const padding = 50;
-    const minX = Math.min(...words.map((w) => w.x));
-    const maxX = Math.max(...words.map((w) => w.x + w.width));
-    const minY = Math.min(...words.map((w) => w.y - w.height));
-    const maxY = Math.max(...words.map((w) => w.y));
-    const width = maxX - minX + padding * 2;
-    const height = maxY - minY + padding * 2;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.fillStyle = "rgb(255 255 255 / 0%)"; // "rgb(255 255 255)";
-    ctx.fillRect(0, 0, width, height);
-
-    words.forEach((word) => {
-      const currentFontStyle = {
-        ...globalFontStyle,
-        ...fontStyleMap[word.text],
-      };
-      const currentTextShadow = {
-        ...globalTextShadow,
-        ...textShadowMap[word.text],
-      };
-      ctx.shadowColor = `rgba(${currentTextShadow.rgba.r},${
-        currentTextShadow.rgba.g
-      },${currentTextShadow.rgba.b},${currentTextShadow.rgba.a || 0})`;
-      ctx.shadowBlur = currentTextShadow.blur;
-      ctx.shadowOffsetX = currentTextShadow.dx;
-      ctx.shadowOffsetY = currentTextShadow.dy;
-      ctx.font = `${currentFontStyle.italic ? "italic" : ""} ${
-        currentFontStyle.fontWeight
-      } ${word.fontSize}px ${currentFontStyle.fontFamily}`;
-      ctx.fillStyle = textColorMap[word.text]?.color || "#545454";
-      ctx.fillText(word.text, word.x - minX + padding, word.y - minY + padding);
-      4;
-    });
-
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "wordcloud.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
-  };
   useEffect(() => {
     if (composition.length === 0) {
       // TODO 初始化
@@ -218,36 +66,31 @@ export default function StylePage() {
   }, [textColorPalette, schemeMode]);
 
   return (
-    <div className="grid grid-cols-4 gap-8 h-[600px]">
-      <div className="col-start-1 col-end-4">
-        <Canvas ref={canvasRef} />
-      </div>
-      <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
-        <Button style="hollow" onClick={handleRegenerateWordCloud}>
-          <div className="flex justify-center items-center">
-            <FaArrowRotateLeft />
-            <div className="pl-2">重新隨機排列詞彙</div>
-          </div>
-        </Button>
-        <TabSwitcher
-          tabs={[
-            { label: "整體樣式", value: "global" },
-            { label: "個別樣式", value: "Single" },
-          ]}
-          current={currentEditTab}
-          onChange={handelChangeEditTab}
-          className="px-5"
-        />
-        {currentEditTab === "global" && <GlobalEditPanel />}
-        {currentEditTab === "Single" && <SingleEditPanel />}
-        <div className="flex justify-between">
-          <Button style="solid" className="px-5" onClick={handleDownloadSVG}>
-            下載SVG
-          </Button>
-          <Button style="solid" className="px-5" onClick={handleDownloadPNG}>
-            下載PNG
-          </Button>
+    <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
+      <Button style="hollow" onClick={triggerRegenerate}>
+        <div className="flex justify-center items-center">
+          <FaArrowRotateLeft />
+          <div className="pl-2">重新隨機排列詞彙</div>
         </div>
+      </Button>
+      <TabSwitcher
+        tabs={[
+          { label: "整體樣式", value: "global" },
+          { label: "個別樣式", value: "Single" },
+        ]}
+        current={currentEditTab}
+        onChange={handelChangeEditTab}
+        className="px-5"
+      />
+      {currentEditTab === "global" && <GlobalEditPanel />}
+      {currentEditTab === "Single" && <SingleEditPanel />}
+      <div className="flex justify-between">
+        <Button style="solid" className="px-5" onClick={downloadSVG}>
+          下載SVG
+        </Button>
+        <Button style="solid" className="px-5" onClick={downloadPNG}>
+          下載PNG
+        </Button>
       </div>
     </div>
   );

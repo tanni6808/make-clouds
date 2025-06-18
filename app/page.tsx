@@ -1,5 +1,5 @@
 "use client";
-import { useWordCloudStore } from "./lib/wordCloudStore";
+import { useWordCloudStore } from "./lib/useWordCloudStore";
 import { useRouter } from "next/navigation";
 import Button from "./components/button";
 

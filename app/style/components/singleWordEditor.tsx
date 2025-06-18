@@ -7,7 +7,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import Counter from "@/app/components/counter";
 import { FontDropdown } from "@/app/components/dropdown";
-import { useWordCloudStore } from "@/app/lib/wordCloudStore";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 import { FontStyle, RGBAColor } from "@/app/lib/definitions";
 
 import { useState, useEffect } from "react";

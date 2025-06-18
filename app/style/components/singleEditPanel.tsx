@@ -1,5 +1,5 @@
 import SingleWordEditor from "./singleWordEditor";
-import { useWordCloudStore } from "@/app/lib/wordCloudStore";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 export default function SingleEditPanel() {
   const { segmentedWords, removedWords, selectionCount } = useWordCloudStore();

@@ -64,6 +64,8 @@ type WordCloudState = {
   setGlobalTextShadow: (shadow: Partial<TextShadow>) => void;
   setTextShadow: (text: string, shadow: TextShadow) => void;
   deleteSingleTextShadow: (text: string) => void;
+
+  clearStyleMaps: () => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -302,6 +304,28 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
       const newMap = { ...state.textShadowMap };
       delete newMap[text];
       return { textShadowMap: newMap };
+    });
+  },
+  clearStyleMaps: () => {
+    set({
+      fontStyleMap: {},
+      globalFontStyle: {
+        fontFamily: "Noto sans TC",
+        fontWeight: "700",
+        italic: false,
+        underline: false,
+      },
+      textColorMap: {},
+      textColorPalette: [],
+      schemeMode: "none",
+      colorSchemes: [],
+      textShadowMap: {},
+      globalTextShadow: {
+        dx: 0,
+        dy: 0,
+        blur: 0,
+        rgba: { r: 84, g: 84, b: 84, a: 0 },
+      },
     });
   },
 }));

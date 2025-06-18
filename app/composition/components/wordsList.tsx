@@ -1,5 +1,5 @@
 "use client";
-import { useWordCloudStore } from "@/app/lib/wordCloudStore";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 export default function WordsList() {
   const {

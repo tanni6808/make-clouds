@@ -39,7 +39,6 @@ export default function StepNavigation() {
   ];
   const currentStepIndex = steps.findIndex((s) => s.path === pathname);
   const handleClick = (path: string) => {
-    console.log("clicked");
     if (confirm("回到之前的步驟將會失去在此步驟做的更動，是否繼續？"))
       router.push(path);
   };

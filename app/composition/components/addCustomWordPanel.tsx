@@ -1,4 +1,4 @@
-import { useWordCloudStore } from "@/app/lib/wordCloudStore";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 import { useState } from "react";
 
 export default function AddCustomWordPanel() {
