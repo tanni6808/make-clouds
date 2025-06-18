@@ -455,7 +455,6 @@ export default function Canvas() {
     if (pathname === "/composition") {
       useWordCloudStore.getState().resetStyleMaps();
     }
-    setSelectedWord(null);
   }, [pathname]);
 
   return (

@@ -17,8 +17,13 @@ export default function StylePage() {
   const downloadSVG = useCanvasStore((s) => s.downloadSVG);
   const downloadPNG = useCanvasStore((s) => s.downloadPNG);
   const composition = useWordCloudStore((s) => s.composition);
-  const { textColorPalette, schemeMode, setColorSchemes, selectedWord } =
-    useWordCloudStore();
+  const {
+    textColorPalette,
+    schemeMode,
+    setColorSchemes,
+    selectedWord,
+    setSelectedWord,
+  } = useWordCloudStore();
   const [currentEditTab, setCurrentEditTab] = useState<string>("global");
 
   const handelChangeEditTab = (value: string) => {
@@ -68,6 +73,10 @@ export default function StylePage() {
       setCurrentEditTab("single");
     }
   }, [selectedWord]);
+  useEffect(() => {
+    setSelectedWord(null);
+    setCurrentEditTab("global");
+  }, []);
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
