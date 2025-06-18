@@ -122,29 +122,30 @@ export function generateWordCloud(
   measureGroup.setAttribute("opacity", "0");
   svg.appendChild(measureGroup);
 
-  const placedWords: DOMRect[] = [];
+  const placedRects: DOMRect[] = [];
   const result: WordComposition[] = [];
 
+  // 建立離螢幕 canvas 測量用
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d")!;
+  ctx.font = "bold 16px Noto Sans TC"; // 預設 font
+
   drawWords.forEach((word, index) => {
-    const text = document.createElementNS(xmlns, "text");
-    text.textContent = word.text;
-    text.setAttribute("font-size", word.size.toString());
-    text.setAttribute("fill", "#545454");
-    text.style.fontFamily = "Noto Sans TC";
-    text.style.fontWeight = "bold";
+    // 設定文字樣式
+    ctx.font = `bold ${word.size}px Noto Sans TC`;
 
-    measureGroup.appendChild(text);
+    const metrics = ctx.measureText(word.text);
+    const textWidth = metrics.width;
+    const ascent = metrics.actualBoundingBoxAscent;
+    const descent = metrics.actualBoundingBoxDescent;
+    const textHeight = ascent + descent;
 
-    // 校正第一個字的位移
     let centerOffsetX = 0;
     if (index === 0) {
-      text.setAttribute("x", centerX.toString());
-      text.setAttribute("y", centerY.toString());
-      const firstBbox = text.getBBox();
-      centerOffsetX = firstBbox.width / 2;
+      centerOffsetX = textWidth / 2;
     }
 
-    // 隨機選位
+    // 隨機放置
     const step = 1;
     let placed = false;
     let attempts = 0;
@@ -154,51 +155,50 @@ export function generateWordCloud(
       const startRadius = 10 + Math.random() * 200;
       const angleOffset = Math.random() * Math.PI * 2;
       const r = startRadius + step * attempts;
-      const a = angleOffset; //+ 0.1 * attempts;
+      const a = angleOffset;
+
       const x = centerX - centerOffsetX + r * Math.cos(a);
       const y = centerY + r * 0.6 * Math.sin(a);
 
-      text.setAttribute("x", x.toString());
-      text.setAttribute("y", y.toString());
-
-      const bbox = text.getBBox();
-      const rect = new DOMRect(bbox.x, bbox.y, bbox.width, bbox.height);
-      const overlap = placedWords.some((w) => isOverlap(w, rect));
+      // 注意這裡是用 baseline 作為 y，rect 要往上移 ascent
+      const rect = new DOMRect(x, y - ascent, textWidth, textHeight);
+      const overlap = placedRects.some((w) => isOverlap(w, rect));
 
       if (!overlap) {
-        // group.appendChild(text);
-        placedWords.push(rect);
+        placedRects.push(rect);
         placed = true;
+
         result.push({
           text: word.text,
           x: x,
           y: y,
+          descent: descent,
           fontSize: word.size,
-          width: bbox.width,
-          height: bbox.height,
+          width: textWidth,
+          height: textHeight,
         });
       }
+
       attempts++;
     }
 
     if (!placed) {
-      text.setAttribute("x", "0");
-      text.setAttribute("y", "0");
-      const bbox = text.getBBox();
+      const fallbackX = 0;
+      const fallbackY = 0;
+
       result.push({
         text: word.text,
-        x: 0,
-        y: 0,
+        x: fallbackX,
+        y: fallbackY,
+        descent: descent,
         fontSize: word.size,
-        width: bbox.width,
-        height: bbox.height,
+        width: textWidth,
+        height: textHeight,
       });
-      alert(`${word.text}找不到合適的位置，將放置於左上角。`);
-      return;
+
+      alert(`${word.text} 找不到合適的位置，將放置於左上角。`);
     }
   });
-
-  svg.removeChild(measureGroup);
 
   return result;
 }

@@ -8,6 +8,7 @@ export type WordComposition = {
   text: string;
   x: number;
   y: number;
+  descent: number;
   fontSize: number;
   rotate?: number;
   width: number;

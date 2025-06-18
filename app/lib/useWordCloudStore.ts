@@ -68,6 +68,10 @@ type WordCloudState = {
   deleteSingleTextShadow: (text: string) => void;
 
   resetStyleMaps: () => void;
+
+  // selected word
+  selectedWord: string | null;
+  setSelectedWord: (word: string | null) => void;
 };
 
 export const useWordCloudStore = create<WordCloudState>((set, get) => ({
@@ -338,5 +342,10 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
         rgba: { r: 84, g: 84, b: 84, a: 0 },
       },
     });
+  },
+
+  selectedWord: null,
+  setSelectedWord: (word: string | null) => {
+    set({ selectedWord: word });
   },
 }));

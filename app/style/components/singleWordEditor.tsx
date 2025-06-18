@@ -13,8 +13,14 @@ import { FontStyle, RGBAColor } from "@/app/lib/definitions";
 import { useState, useEffect } from "react";
 
 export default function SingleWordEditor({ text }: { text: string }) {
+  const selectedWord = useWordCloudStore((s) => s.selectedWord);
   // 編輯區塊
   const [showEditPanel, setShowEditPanel] = useState<boolean>(false);
+  useEffect(() => {
+    if (selectedWord === text) {
+      setShowEditPanel(true);
+    } else setShowEditPanel(false);
+  }, [selectedWord]);
 
   // 字型
   const globalFontStyle = useWordCloudStore((s) => s.globalFontStyle);
@@ -56,6 +62,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
   const textColorPalette = useWordCloudStore((s) => s.textColorPalette);
   const setTextColor = useWordCloudStore((s) => s.setTextColor);
   const delTextColor = useWordCloudStore((s) => s.delTextColor);
+  const currentTextColor = textColor?.color ?? defaultTextColor;
 
   const [addColorEditor, setAddColorEditor] = useState<boolean>(
     !!(textColor && !textColor.sourceSlotId)
@@ -113,6 +120,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
           showEditPanel ? "bg-gray-light" : "bg-gray-md"
         } p-2.5 rounded-md hover:bg-gray-dark flex items-center justify-between`}
         onClick={() => setShowEditPanel((s) => !s)}
+        data-word={text}
       >
         <div className="flex items-center">
           {showEditPanel ? <TbTriangleFilled /> : <TbTriangleInvertedFilled />}
@@ -199,7 +207,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <ColorPicker
-                    color={textColor.color}
+                    color={currentTextColor}
                     onChange={handleTextColorChange}
                     size="30"
                     pickerLoc={{ x: 0, y: 0 }}

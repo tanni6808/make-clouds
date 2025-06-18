@@ -189,7 +189,10 @@ export default function Canvas() {
     };
   }, []);
 
-  //SEC 文字雲繪製
+  // SEC 點擊詞彙
+  const setSelectedWord = useWordCloudStore((s) => s.setSelectedWord);
+
+  // SEC 文字雲繪製
   const {
     segmentedWords,
     removedWords,
@@ -452,6 +455,7 @@ export default function Canvas() {
     if (pathname === "/composition") {
       useWordCloudStore.getState().resetStyleMaps();
     }
+    setSelectedWord(null);
   }, [pathname]);
 
   return (
@@ -463,6 +467,7 @@ export default function Canvas() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onClick={() => setSelectedWord(null)}
         style={{ cursor: "move" }}
       >
         <g
@@ -474,13 +479,14 @@ export default function Canvas() {
               x={composition[hoverIndex].x}
               y={
                 composition[hoverIndex].y -
-                composition[hoverIndex].fontSize * 1.1
+                composition[hoverIndex].height +
+                composition[hoverIndex].descent
               }
               width={composition[hoverIndex].width}
               height={composition[hoverIndex].height}
               fill="none"
-              stroke="#f00"
-              strokeDasharray="4"
+              stroke="#DF6F6F"
+              strokeDasharray="2"
               strokeWidth={2}
               pointerEvents="none"
             />
@@ -518,6 +524,10 @@ export default function Canvas() {
                 }`}
                 onMouseEnter={() => setHoverIndex(index)}
                 onMouseLeave={() => setHoverIndex(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedWord(word.text);
+                }}
               >
                 {word.text}
               </text>

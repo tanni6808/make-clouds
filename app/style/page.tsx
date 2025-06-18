@@ -17,7 +17,8 @@ export default function StylePage() {
   const downloadSVG = useCanvasStore((s) => s.downloadSVG);
   const downloadPNG = useCanvasStore((s) => s.downloadPNG);
   const composition = useWordCloudStore((s) => s.composition);
-  const { textColorPalette, schemeMode, setColorSchemes } = useWordCloudStore();
+  const { textColorPalette, schemeMode, setColorSchemes, selectedWord } =
+    useWordCloudStore();
   const [currentEditTab, setCurrentEditTab] = useState<string>("global");
 
   const handelChangeEditTab = (value: string) => {
@@ -62,6 +63,12 @@ export default function StylePage() {
     fetchColorSchemes();
   }, [textColorPalette, schemeMode]);
 
+  useEffect(() => {
+    if (selectedWord) {
+      setCurrentEditTab("single");
+    }
+  }, [selectedWord]);
+
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
       <Button style="hollow" onClick={triggerRegenerate}>
@@ -73,14 +80,14 @@ export default function StylePage() {
       <TabSwitcher
         tabs={[
           { label: "整體樣式", value: "global" },
-          { label: "個別樣式", value: "Single" },
+          { label: "個別樣式", value: "single" },
         ]}
         current={currentEditTab}
         onChange={handelChangeEditTab}
         className="px-5"
       />
       {currentEditTab === "global" && <GlobalEditPanel />}
-      {currentEditTab === "Single" && <SingleEditPanel />}
+      {currentEditTab === "single" && <SingleEditPanel />}
       <div className="flex justify-between">
         <Button style="solid" className="px-5" onClick={downloadSVG}>
           下載SVG
