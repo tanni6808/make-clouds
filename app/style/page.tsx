@@ -6,6 +6,7 @@ import Button from "../components/button";
 import TabSwitcher from "../components/tabSwitcher";
 import GlobalEditPanel from "./components/globalEditPanel";
 import SingleEditPanel from "./components/singleEditPanel";
+import DownloadFilePanel from "./components/downloadFilePanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 
@@ -14,8 +15,6 @@ import { FaArrowRotateLeft } from "react-icons/fa6";
 export default function StylePage() {
   const router = useRouter();
   const triggerRegenerate = useCanvasStore((s) => s.triggerRegenerate);
-  const downloadSVG = useCanvasStore((s) => s.downloadSVG);
-  const downloadPNG = useCanvasStore((s) => s.downloadPNG);
   const composition = useWordCloudStore((s) => s.composition);
   const {
     textColorPalette,
@@ -76,9 +75,13 @@ export default function StylePage() {
     setSelectedWord(null);
     setCurrentEditTab("global");
   }, []);
+  useEffect(() => {
+    const stepNavEl = document.getElementById("step-nav");
+    stepNavEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
 
   return (
-    <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3">
+    <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3 max-md:grid-rows-[auto_auto_auto_1fr]">
       <Button style="hollow" onClick={triggerRegenerate}>
         <div className="flex justify-center items-center">
           <FaArrowRotateLeft />
@@ -96,14 +99,7 @@ export default function StylePage() {
       />
       {currentEditTab === "global" && <GlobalEditPanel />}
       {currentEditTab === "single" && <SingleEditPanel />}
-      <div className="flex justify-between">
-        <Button style="solid" className="px-5" onClick={downloadSVG}>
-          下載SVG
-        </Button>
-        <Button style="solid" className="px-5" onClick={downloadPNG}>
-          下載PNG
-        </Button>
-      </div>
+      <DownloadFilePanel className="max-md:row-start-1" />
     </div>
   );
 }

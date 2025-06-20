@@ -1,7 +1,9 @@
 "use client";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
+
 import Button from "./button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 function IndexHeader() {
   const handleStart = () => {
@@ -24,14 +26,19 @@ function IndexHeader() {
 
 function SimpleHeader() {
   return (
-    // NOTE text-color width breaker
-    // width < 640(max-sm): red
-    // 640 <= width < 768(max-md): yellow
-    // 768 <= width < 1024(max-lg): green
-    // 1024 <= width < 1280(max-xl): blue
-    // 1280 <= width: gray
-
-    <header className="h-[60px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10 max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500 max-md:fixed max-md:top-0 max-md:z-30 max-md:left-0 max-md:right-0 max-md:rounded-none">
+    <header
+      className={clsx(
+        "h-[60px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10",
+        "max-md:fixed max-md:top-0 max-md:z-30 max-md:left-0 max-md:right-0 max-md:rounded-none"
+        // "max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500"
+        // NOTE text-color width breaker
+        // width < 640(max-sm): red
+        // 640 <= width < 768(max-md): yellow
+        // 768 <= width < 1024(max-lg): green
+        // 1024 <= width < 1280(max-xl): blue
+        // 1280 <= width: gray
+      )}
+    >
       <div className="w-[90%] mx-auto text-3xl max-sm:text-2xl">
         <Link href="/">製雲</Link>
       </div>

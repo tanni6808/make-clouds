@@ -44,25 +44,30 @@ export default function CompositionPage() {
     setSegmentedWords(result);
   }, [article, customWords, stopwords]);
 
+  useEffect(() => {
+    const stepNavEl = document.getElementById("step-nav");
+    stepNavEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
+
   return (
-    <div className="grid grid-rows-[auto_100px_1fr_100px_auto] gap-3 max-md:grid-cols-2 max-md:grid-rows-[44px_44px_120px_120px]">
+    <div className="grid grid-rows-[auto_1fr_100px_100px_auto] gap-3 max-md:grid-rows-[auto_auto_120px_120px]">
       <Button
         style="hollow"
         onClick={triggerRegenerate}
-        className="max-md:col-start-1 max-md:col-end-3 max-md:row-start-2"
+        className="max-md:row-start-2"
       >
         <div className="flex justify-center items-center">
           <FaArrowRotateLeft />
           <div className="pl-2">重新隨機排列詞彙</div>
         </div>
       </Button>
-      <TotalWordsPanel />
       <WordsList className="max-md:row-start-3 max-md:row-end-5" />
+      <TotalWordsPanel />
       <AddCustomWordPanel />
       <Button
         style="solid"
         onClick={handleGoNextStep}
-        className="max-md:col-start-1 max-md:col-end-3 max-md:row-start-1"
+        className="max-md:row-start-1"
       >
         下一步：編輯詞彙樣式
       </Button>

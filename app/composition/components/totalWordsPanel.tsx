@@ -43,7 +43,7 @@ export default function TotalWordsPanel({ className }: { className?: string }) {
       )}
     >
       <div className="mb-2 text-center">詞彙數量</div>
-      <div className="flex items-center justify-between max-md:text-lg">
+      <div className="flex items-center justify-center max-md:text-lg">
         <div className="flex gap-2">
           <LittleBtn
             onClick={() => decrementSelectionCount(10)}
@@ -58,7 +58,7 @@ export default function TotalWordsPanel({ className }: { className?: string }) {
             -1
           </LittleBtn>
         </div>
-        <div className="text-xl px-2">{selectionCount}</div>
+        <div className="text-xl px-2 w-12 text-center">{selectionCount}</div>
         <div className="flex gap-2">
           <LittleBtn
             onClick={() => incrementSelectionCount(1)}

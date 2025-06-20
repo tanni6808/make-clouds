@@ -43,7 +43,7 @@ export default function StepNavigation() {
       router.push(path);
   };
   return (
-    <div className="flex mb-10 h-8 w-[90%] mx-auto">
+    <div className="flex mb-10 h-8 w-[90%] mx-auto" id="step-nav">
       {steps.map((step, i) => {
         const isPast = i < currentStepIndex;
         const isCurrent = i === currentStepIndex;
