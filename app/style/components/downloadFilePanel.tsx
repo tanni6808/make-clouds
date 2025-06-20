@@ -10,7 +10,7 @@ export default function DownloadFilePanel({
   className?: string;
 }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState<Boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const downloadSVG = useCanvasStore((s) => s.downloadSVG);
   const downloadPNG = useCanvasStore((s) => s.downloadPNG);
 
