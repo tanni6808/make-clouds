@@ -9,6 +9,7 @@ export default function Home() {
   const router = useRouter();
   const { article, setArticle } = useWordCloudStore();
   const handleLoadExample = () => {
+    if (article !== "") return setArticle("");
     fetch("/texts/word-cloud.txt")
       .then((res) => res.text())
       .then((text) => setArticle(text));
@@ -41,7 +42,7 @@ export default function Home() {
           type="button"
           className="px-8 "
         >
-          載入範例文章
+          {article === "" ? "載入範例文章" : "清空輸入區塊"}
         </Button>
         <Button style="solid" className="px-8 ">
           開始製作

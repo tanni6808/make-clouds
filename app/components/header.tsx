@@ -28,9 +28,9 @@ function SimpleHeader() {
   return (
     <header
       className={clsx(
-        "h-[60px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10",
-        "max-md:fixed max-md:top-0 max-md:z-30 max-md:left-0 max-md:right-0 max-md:rounded-none"
-        // "max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500"
+        "h-[60px] bg-white shadow flex flex-col justify-center mb-10 fixed top-0 z-30 left-0 right-0",
+        "md:hidden",
+        "max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500"
         // NOTE text-color width breaker
         // width < 640(max-sm): red
         // 640 <= width < 768(max-md): yellow
