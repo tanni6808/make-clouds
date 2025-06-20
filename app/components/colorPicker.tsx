@@ -1,7 +1,9 @@
-import { ChromePicker } from "react-color";
 import { useState, useRef, useEffect } from "react";
-import { TbColorPicker } from "react-icons/tb";
+
 import { RGBAColor } from "../lib/definitions";
+import { ChromePicker } from "react-color";
+
+import { TbColorPicker } from "react-icons/tb";
 
 function getTextColorForBackground(hexColor: string): string {
   // 去掉 "#" 開頭

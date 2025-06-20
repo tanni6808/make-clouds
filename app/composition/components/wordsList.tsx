@@ -1,8 +1,10 @@
 "use client";
-import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 import { useEffect, useRef } from "react";
+import clsx from "clsx";
 
-export default function WordsList() {
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
+
+export default function WordsList({ className }: { className?: string }) {
   const {
     segmentedWords,
     removedWords,
@@ -40,7 +42,12 @@ export default function WordsList() {
   }, [selectedWord]);
 
   return (
-    <div className="outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px] grid grid-rows-[auto_210px]">
+    <div
+      className={clsx(
+        "outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px] grid grid-rows-[auto_210px] max-md:grid-rows-[auto_190px]",
+        className
+      )}
+    >
       <div className="mb-2 text-center">詞彙庫</div>
       <ul className="overflow-y-auto flex flex-col gap-2" ref={listRef}>
         {visibleWords.map((word, index) => (

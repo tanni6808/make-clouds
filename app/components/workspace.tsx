@@ -1,12 +1,17 @@
-import StepNavigation from "./stepNav";
-
-export default function Workspace({ children }: { children: React.ReactNode }) {
+export default function Workspace({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="bg-white rounded-3xl shadow mb-10">
-      <div className="w-[1000px] mx-auto pb-10">
-        <StepNavigation />
-        {children}
-      </div>
+    <div
+      className={`bg-white rounded-3xl shadow mb-10 max-md:rounded-t-none ${
+        className ?? ""
+      }`}
+    >
+      <div className="max-w-[1000px] mx-auto pb-10">{children}</div>
     </div>
   );
 }

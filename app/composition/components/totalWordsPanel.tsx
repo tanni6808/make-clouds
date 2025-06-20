@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 function LittleBtn({
@@ -11,7 +13,7 @@ function LittleBtn({
 }) {
   return (
     <button
-      className="h-[32px] w-[32px] bg-primary-dark hover:bg-primary-light text-white rounded disabled:bg-gray-dark"
+      className="h-[32px] w-[32px] bg-primary-dark hover:bg-primary-light text-white rounded disabled:bg-gray-dark max-md:h-[40px] max-md:w-[40px]"
       onClick={onClick}
       disabled={disabled}
     >
@@ -20,7 +22,7 @@ function LittleBtn({
   );
 }
 
-export default function TotalWordsPanel() {
+export default function TotalWordsPanel({ className }: { className?: string }) {
   const {
     selectionCount,
     incrementSelectionCount,
@@ -34,9 +36,14 @@ export default function TotalWordsPanel() {
 
   const maxSelectableCount = Math.min(100, availableCount);
   return (
-    <div className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]">
+    <div
+      className={clsx(
+        "outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]",
+        className
+      )}
+    >
       <div className="mb-2 text-center">詞彙數量</div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-md:text-lg">
         <div className="flex gap-2">
           <LittleBtn
             onClick={() => decrementSelectionCount(10)}

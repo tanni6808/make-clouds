@@ -1,6 +1,7 @@
 "use client";
-import SingleWordEditor from "./singleWordEditor";
 import { useEffect, useRef } from "react";
+
+import SingleWordEditor from "./singleWordEditor";
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 export default function SingleEditPanel() {

@@ -1,8 +1,9 @@
 "use client";
 import { useEffect } from "react";
-import { useWordCloudStore } from "./lib/useWordCloudStore";
 import { useRouter } from "next/navigation";
+
 import Button from "./components/button";
+import { useWordCloudStore } from "./lib/useWordCloudStore";
 
 export default function Home() {
   const router = useRouter();
@@ -28,12 +29,12 @@ export default function Home() {
     >
       <textarea
         id="textarea"
-        className="w-[900px] h-[420px] my-4 bg-gray-light p-[50px] rounded-2xl"
+        className="w-[90%] h-[420px] my-4 bg-gray-light p-[50px] rounded-2xl"
         placeholder="在此輸入文章..."
         value={article}
         onChange={(e) => setArticle(e.target.value)}
       ></textarea>
-      <div className="flex justify-center gap-6">
+      <div className="flex justify-center gap-6 max-sm:flex-col max-sm:gap-3">
         <Button
           style="hollow"
           onClick={handleLoadExample}

@@ -1,11 +1,13 @@
 "use client";
-import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { SegmentedWord, Transform } from "../lib/definitions";
+import { usePathname } from "next/navigation";
+
 import Button from "./button";
+import { SegmentedWord, Transform } from "../lib/definitions";
+import { generateWordCloud } from "../lib/wordCloudMethod";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
-import { generateWordCloud } from "../lib/wordCloudMethod";
+
 import { FaCompressArrowsAlt } from "react-icons/fa";
 
 export default function Canvas() {
@@ -458,7 +460,7 @@ export default function Canvas() {
   }, [pathname]);
 
   return (
-    <div className="h-full outline-4 outline-primary-dark outline-offset-[-4px] rounded-2xl relative">
+    <div className="h-full outline-4 outline-primary-dark outline-offset-[-4px] rounded-2xl relative max-md:rounded-none">
       <svg
         ref={svgRef}
         className="h-full w-full"
@@ -539,7 +541,7 @@ export default function Canvas() {
         className="absolute z-10 right-[10px] bottom-[10px] px-4 "
         onClick={() => resetCanvasPosition(true)}
       >
-        <div className="flex items-center">
+        <div className="flex items-center max-md:text-sm">
           <FaCompressArrowsAlt />
           <div className="pl-2">重置畫布縮放</div>
         </div>

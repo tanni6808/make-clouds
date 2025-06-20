@@ -18,7 +18,7 @@ function Step({
       onClick={clickable ? onClick : undefined}
       className={clsx(
         "w-1/3 text-center mx-2",
-        active ? "border-t-8" : "border-t-4 text-gray-dark",
+        active ? "border-t-8" : "border-t-4 text-gray-dark text-sm",
         clickable
           ? "cursor-pointer hover:text-primary-dark hover:border-t-[10px] transition-[all]"
           : ""
@@ -43,7 +43,7 @@ export default function StepNavigation() {
       router.push(path);
   };
   return (
-    <div className="flex mb-10 h-8">
+    <div className="flex mb-10 h-8 w-[90%] mx-auto">
       {steps.map((step, i) => {
         const isPast = i < currentStepIndex;
         const isCurrent = i === currentStepIndex;

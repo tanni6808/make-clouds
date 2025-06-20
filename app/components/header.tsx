@@ -10,7 +10,7 @@ function IndexHeader() {
   };
   return (
     <header className="h-[640px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10">
-      <div className="w-[1000px] mx-auto ">
+      <div className="w-[80%] mx-auto">
         <div className="text-5xl mb-6">製雲</div>
         <div className="text-2xl">三個步驟，</div>
         <div className="text-2xl mb-4">製作精美的繁體中文文字雲。</div>
@@ -24,8 +24,15 @@ function IndexHeader() {
 
 function SimpleHeader() {
   return (
-    <header className="h-[60px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10">
-      <div className="w-[1000px] mx-auto text-3xl">
+    // NOTE text-color width breaker
+    // width < 640(max-sm): red
+    // 640 <= width < 768(max-md): yellow
+    // 768 <= width < 1024(max-lg): green
+    // 1024 <= width < 1280(max-xl): blue
+    // 1280 <= width: gray
+
+    <header className="h-[60px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10 max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500 max-md:fixed max-md:top-0 max-md:z-30 max-md:left-0 max-md:right-0 max-md:rounded-none">
+      <div className="w-[90%] mx-auto text-3xl max-sm:text-2xl">
         <Link href="/">製雲</Link>
       </div>
     </header>

@@ -1,15 +1,15 @@
 "use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import Button from "../components/button";
 import TabSwitcher from "../components/tabSwitcher";
 import GlobalEditPanel from "./components/globalEditPanel";
 import SingleEditPanel from "./components/singleEditPanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
-import { FaArrowRotateLeft } from "react-icons/fa6";
 
-// import clsx from "clsx";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { FaArrowRotateLeft } from "react-icons/fa6";
 
 export default function StylePage() {
   const router = useRouter();
@@ -62,7 +62,6 @@ export default function StylePage() {
       }));
 
       setColorSchemes(allColorSchemes);
-      // setRandomTextColor(); // 更新詞彙顏色
     };
 
     fetchColorSchemes();

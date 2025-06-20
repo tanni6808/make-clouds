@@ -56,12 +56,3 @@ export type Transform = {
   translateX: number;
   translateY: number;
 };
-
-export type CanvasProps = {
-  words: WordComposition[];
-  // hoveredIndex: number | null;
-  // selectedIndex: number | null;
-  // onHover: (index: number | null) => void; // NOTE hover can be on text or on svg(null) ?
-  // onSelect: (index: number) => void;
-  // onMove: (index: number, x: number, y: number) => void;
-};

@@ -1,7 +1,13 @@
-import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 import { useState } from "react";
+import clsx from "clsx";
 
-export default function AddCustomWordPanel() {
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
+
+export default function AddCustomWordPanel({
+  className,
+}: {
+  className?: string;
+}) {
   const [customWord, setCustomWord] = useState<string>("");
   const { addCustomWord } = useWordCloudStore();
   const handleAddCustomWord = (e: React.FormEvent) => {
@@ -11,14 +17,17 @@ export default function AddCustomWordPanel() {
   };
   return (
     <form
-      className="outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]"
+      className={clsx(
+        "outline outline-4 outline-primary-dark outline-offset-[-4px] rounded-lg p-[15px]",
+        className
+      )}
       onSubmit={(e) => handleAddCustomWord(e)}
     >
       <div className="mb-2 text-center">新增詞彙</div>
       <div className="flex items-center gap-3">
         <input
           type="text"
-          className="w-[140px] bg-gray-light h-[36px] rounded-md pl-2"
+          className="w-[70%] bg-gray-light h-[36px] rounded-md pl-2"
           placeholder="輸入詞彙..."
           value={customWord}
           onChange={(e) => setCustomWord(e.target.value)}
@@ -27,7 +36,7 @@ export default function AddCustomWordPanel() {
           type="submit"
           className="grow bg-primary-dark h-[36px] text-white rounded-md hover:bg-primary-light transition"
         >
-          +
+          新增
         </button>
       </div>
     </form>

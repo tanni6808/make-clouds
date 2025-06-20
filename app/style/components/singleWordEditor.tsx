@@ -1,16 +1,17 @@
 "use client";
-// import { IoMdEye } from "react-icons/io";
-// import { IoMdEyeOff } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
-import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
-import { FiPlusCircle } from "react-icons/fi";
+import { useState, useEffect } from "react";
+
+import { FontStyle, RGBAColor } from "@/app/lib/definitions";
+import { FontDropdown } from "@/app/components/dropdown";
 import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import Counter from "@/app/components/counter";
-import { FontDropdown } from "@/app/components/dropdown";
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
-import { FontStyle, RGBAColor } from "@/app/lib/definitions";
 
-import { useState, useEffect } from "react";
+// import { IoMdEye } from "react-icons/io";
+// import { IoMdEyeOff } from "react-icons/io";
+import { FiPlusCircle } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
+import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
 
 export default function SingleWordEditor({ text }: { text: string }) {
   const selectedWord = useWordCloudStore((s) => s.selectedWord);

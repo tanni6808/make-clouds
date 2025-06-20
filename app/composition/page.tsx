@@ -1,15 +1,16 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import Button from "../components/button";
-import TotalWordsPanel from "./components/totalWordsPanel";
 import WordsList from "./components/wordsList";
+import TotalWordsPanel from "./components/totalWordsPanel";
 import AddCustomWordPanel from "./components/addCustomWordPanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 import { generateWordList } from "../lib/wordCloudMethod";
-import { FaArrowRotateLeft } from "react-icons/fa6";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FaArrowRotateLeft } from "react-icons/fa6";
 
 export default function CompositionPage() {
   const { article, customWords, setSegmentedWords } = useWordCloudStore();
@@ -44,17 +45,25 @@ export default function CompositionPage() {
   }, [article, customWords, stopwords]);
 
   return (
-    <div className="grid grid-rows-[auto_100px_1fr_100px_auto] gap-3">
-      <Button style="hollow" onClick={triggerRegenerate}>
+    <div className="grid grid-rows-[auto_100px_1fr_100px_auto] gap-3 max-md:grid-cols-2 max-md:grid-rows-[44px_44px_120px_120px]">
+      <Button
+        style="hollow"
+        onClick={triggerRegenerate}
+        className="max-md:col-start-1 max-md:col-end-3 max-md:row-start-2"
+      >
         <div className="flex justify-center items-center">
           <FaArrowRotateLeft />
           <div className="pl-2">重新隨機排列詞彙</div>
         </div>
       </Button>
       <TotalWordsPanel />
-      <WordsList />
+      <WordsList className="max-md:row-start-3 max-md:row-end-5" />
       <AddCustomWordPanel />
-      <Button style="solid" onClick={handleGoNextStep}>
+      <Button
+        style="solid"
+        onClick={handleGoNextStep}
+        className="max-md:col-start-1 max-md:col-end-3 max-md:row-start-1"
+      >
         下一步：編輯詞彙樣式
       </Button>
     </div>
