@@ -7,8 +7,10 @@ import { SegmentedWord, Transform } from "../lib/definitions";
 import { generateWordCloud } from "../lib/wordCloudMethod";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
+import ColorPicker from "./colorPicker";
 
 import { FaCompressArrowsAlt } from "react-icons/fa";
+import { TbColorPicker } from "react-icons/tb";
 
 export default function Canvas() {
   const pathname = usePathname();
@@ -23,6 +25,7 @@ export default function Canvas() {
   const setDownloadPNG = useCanvasStore((s) => s.setDownloadPNG);
 
   //SEC 控制畫布
+  const [canvasColor, setCanvasColor] = useState<string>("#fff");
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
     translateX: 0,
@@ -471,6 +474,10 @@ export default function Canvas() {
         onClick={() => setSelectedWord(null)}
         style={{ cursor: "move" }}
       >
+        {pathname === "/style" && (
+          <rect width="100%" height="100%" fill={canvasColor} rx={16} />
+        )}
+
         <g
           ref={groupRef}
           transform={`translate(${canvasTransform.translateX}, ${canvasTransform.translateY}) scale(${canvasTransform.scale})`}
@@ -536,9 +543,15 @@ export default function Canvas() {
           })}
         </g>
       </svg>
+      {pathname === "/style" && (
+        <div className="absolute z-10 right-[10px] top-[10px] flex items-center max-md:text-sm">
+          <ColorPicker color={canvasColor} onChange={setCanvasColor} />
+        </div>
+      )}
+
       <Button
         style="hollow"
-        className="absolute z-10 right-[10px] bottom-[10px] px-4 "
+        className="absolute z-10 right-[10px] bottom-[10px] px-4"
         onClick={() => resetCanvasPosition(true)}
       >
         <div className="flex items-center max-md:text-sm">
