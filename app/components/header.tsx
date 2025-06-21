@@ -1,30 +1,56 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+// import Image from "next/image";
 import clsx from "clsx";
 
 import Button from "./button";
 import Link from "next/link";
 
 function IndexHeader() {
+  const handleIntro = () => {
+    const introEl = document.getElementById("intro");
+    introEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const handleStart = () => {
     const textareaEl = document.getElementById("textarea");
     textareaEl?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   return (
-    <header className="h-[640px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10">
-      <div className="w-[80%] mx-auto">
-        <div className="text-5xl mb-6">製雲</div>
-        <div className="text-2xl">三個步驟，</div>
-        <div className="text-2xl mb-4">製作精美的繁體中文文字雲。</div>
-        <Button style="solid" onClick={handleStart} className="px-8 ">
-          馬上開始
-        </Button>
+    <header
+      className="h-[640px] bg-white shadow rounded-b-3xl flex flex-col justify-center mb-10"
+      id="header"
+    >
+      <div className="w-[80%] mx-auto flex items-center">
+        <div className="flex flex-col gap-2">
+          <div className="text-5xl mb-6">製雲</div>
+          <div className="text-2xl">三個步驟，</div>
+          <div className="text-2xl mb-4">製作精美的繁體中文文字雲。</div>
+          <div className="flex flex-col gap-2">
+            <Button style="hollow" onClick={handleIntro} className="w-40">
+              如何使用
+            </Button>
+            <Button style="solid" onClick={handleStart} className="w-40">
+              馬上開始
+            </Button>
+          </div>
+        </div>
+        {/* <Image
+          src={"/index-wordcloud.png"}
+          width={600}
+          height={400}
+          alt={"文字雲"}
+        /> */}
       </div>
     </header>
   );
 }
 
 function SimpleHeader() {
+  const router = useRouter();
+  const handleClick = () => {
+    if (confirm("回到首頁將會失去所有編輯進度，是否繼續？"))
+      router.push("/#header");
+  };
   return (
     <header
       className={clsx(
@@ -40,7 +66,7 @@ function SimpleHeader() {
       )}
     >
       <div className="w-[90%] mx-auto text-3xl max-sm:text-2xl">
-        <Link href="/">製雲</Link>
+        <div onClick={handleClick}>製雲</div>
       </div>
     </header>
   );

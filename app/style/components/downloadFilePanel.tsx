@@ -37,7 +37,7 @@ export default function DownloadFilePanel({
       >
         <div className="flex justify-center items-center">
           <FontAwesomeIcon icon={faFileArrowDown} />
-          <div className="">下載檔案</div>
+          <div className="pl-2">下載檔案</div>
         </div>
       </Button>
       {open && (

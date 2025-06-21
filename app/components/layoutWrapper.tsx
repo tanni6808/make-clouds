@@ -20,7 +20,7 @@ export default function LayoutWrapper({
   return (
     <div className="max-w-[1200px] mx-auto max-xl:mx-5 max-md:mx-0">
       <Header />
-      {/* {!showCanvas && <Intro />} */}
+      {!showCanvas && <Intro />}
       <Workspace
         className={clsx(
           "relative",
