@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
 import Header from "./header";
+import Intro from "./intro";
 import Workspace from "./workspace";
 import StepNavigation from "./stepNav";
 import Canvas from "./canvas";
@@ -19,11 +20,7 @@ export default function LayoutWrapper({
   return (
     <div className="max-w-[1200px] mx-auto max-xl:mx-5 max-md:mx-0">
       <Header />
-      {/* {showCanvas && (
-        <div className="md:hidden fixed top-[60px] z-30 left-0 right-0 h-[400px] bg-white pb-[25px]">
-          <Canvas />
-        </div>
-      )} */}
+      {/* {!showCanvas && <Intro />} */}
       <Workspace
         className={clsx(
           "relative",

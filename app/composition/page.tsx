@@ -10,7 +10,8 @@ import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 import { generateWordList } from "../lib/wordCloudMethod";
 
-import { FaArrowRotateLeft } from "react-icons/fa6";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShuffle } from "@fortawesome/free-solid-svg-icons";
 
 export default function CompositionPage() {
   const { article, customWords, setSegmentedWords } = useWordCloudStore();
@@ -57,7 +58,7 @@ export default function CompositionPage() {
         className="max-md:row-start-2"
       >
         <div className="flex justify-center items-center">
-          <FaArrowRotateLeft />
+          <FontAwesomeIcon icon={faShuffle} />
           <div className="pl-2">重新隨機排列詞彙</div>
         </div>
       </Button>

@@ -14,7 +14,7 @@ type WordCloudState = {
   article: string;
   setArticle: (text: string) => void;
 
-  // 階段二: 詞彙確認
+  // 階段二: 調整詞彙
   customWords: string[];
   addCustomWord: (word: string) => void;
   removeCustomWord: (word: string) => void;

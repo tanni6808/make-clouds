@@ -7,11 +7,15 @@ import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import Counter from "@/app/components/counter";
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
-// import { IoMdEye } from "react-icons/io";
-// import { IoMdEyeOff } from "react-icons/io";
-import { FiPlusCircle } from "react-icons/fi";
-import { MdDelete } from "react-icons/md";
-import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faEye } from "@fortawesome/free-solid-svg-icons";
+// import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCirclePlus,
+  faTrash,
+  faChevronDown,
+  faChevronUp,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function SingleWordEditor({ text }: { text: string }) {
   const selectedWord = useWordCloudStore((s) => s.selectedWord);
@@ -124,11 +128,15 @@ export default function SingleWordEditor({ text }: { text: string }) {
         data-word={text}
       >
         <div className="flex items-center">
-          {showEditPanel ? <TbTriangleFilled /> : <TbTriangleInvertedFilled />}
+          {showEditPanel ? (
+            <FontAwesomeIcon icon={faChevronUp} />
+          ) : (
+            <FontAwesomeIcon icon={faChevronDown} />
+          )}
           <div className="pl-2">{text}</div>
         </div>
         {/* //TODO {showWord ? (
-          <IoMdEye
+          <FaEye
             className="text-xl hover:text-primary-light active:text-black"
             onClick={(e) => {
               e.stopPropagation();
@@ -136,7 +144,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
             }}
           />
         ) : (
-          <IoMdEyeOff
+          <FaEyeSlash
             className="text-xl hover:text-primary-light active:text-black"
             onClick={(e) => {
               e.stopPropagation();
@@ -149,7 +157,8 @@ export default function SingleWordEditor({ text }: { text: string }) {
         <div className="bg-gray-light mt-1 rounded p-[10px]">
           {addFontEditor && (
             <div className="my-2 rounded-lg p-[10px] bg-white text-sm relative">
-              <MdDelete
+              <FontAwesomeIcon
+                icon={faTrash}
                 className="absolute right-[10px] top-[10px] h-[18px] w-[18px] hover:text-primary-light cursor-pointer"
                 onClick={handleFontStyleDelete}
               />
@@ -200,7 +209,8 @@ export default function SingleWordEditor({ text }: { text: string }) {
           )}
           {addColorEditor && (
             <div className="my-2 rounded-lg p-[10px] bg-white text-sm relative">
-              <MdDelete
+              <FontAwesomeIcon
+                icon={faTrash}
                 className="absolute right-[10px] top-[10px] h-[18px] w-[18px] hover:text-primary-light cursor-pointer"
                 onClick={handleTextColorDelete}
               />
@@ -241,7 +251,8 @@ export default function SingleWordEditor({ text }: { text: string }) {
           )}
           {addShadowEditor && (
             <div className="my-2 rounded-lg p-[10px] bg-white text-sm relative">
-              <MdDelete
+              <FontAwesomeIcon
+                icon={faTrash}
                 className="absolute right-[10px] top-[10px] h-[18px] w-[18px] hover:text-primary-light cursor-pointer"
                 onClick={handleTextShadowDelete}
               />
@@ -297,7 +308,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
                 setAddFontEditor((s) => !s);
               }}
             >
-              <FiPlusCircle />
+              <FontAwesomeIcon icon={faCirclePlus} />
               <div className="text-sm ml-2">編輯字型</div>
             </div>
           )}
@@ -309,7 +320,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
                 setAddColorEditor((s) => !s);
               }}
             >
-              <FiPlusCircle />
+              <FontAwesomeIcon icon={faCirclePlus} />
               <div className="text-sm ml-2">編輯文字顏色</div>
             </div>
           )}
@@ -321,7 +332,7 @@ export default function SingleWordEditor({ text }: { text: string }) {
                 setAddShadowEditor((s) => !s);
               }}
             >
-              <FiPlusCircle />
+              <FontAwesomeIcon icon={faCirclePlus} />
               <div className="text-sm ml-2">編輯文字陰影</div>
             </div>
           )}

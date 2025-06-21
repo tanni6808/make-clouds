@@ -94,7 +94,7 @@ export default function GlobalEditPanel() {
   const handleChangeColorScheme = (schemeMode: string) => {
     setSchemeMode(schemeMode);
     const palette = textColorPalette;
-    if (schemeMode === "custom") {
+    if (schemeMode === "custom" || schemeMode === "none") {
       setTextColorPalette([palette[0]]);
       setRandomTextColor();
     }

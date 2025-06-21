@@ -34,7 +34,7 @@ export default function StepNavigation() {
   const router = useRouter();
   const steps = [
     { label: "輸入文章", path: "/" },
-    { label: "確認詞彙", path: "/composition" },
+    { label: "調整詞彙", path: "/composition" },
     { label: "編輯樣式", path: "/style" },
   ];
   const currentStepIndex = steps.findIndex((s) => s.path === pathname);
@@ -83,7 +83,7 @@ export default function StepNavigation() {
 //         : "border-t-[12px] text-gray-dark"
 //     } w-1/3 text-center mx-2`}
 //   >
-//     確認詞彙
+//     調整詞彙
 //   </div>
 //   <div
 //     className={`${

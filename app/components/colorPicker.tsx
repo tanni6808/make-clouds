@@ -3,7 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { RGBAColor } from "../lib/definitions";
 import { ChromePicker } from "react-color";
 
-import { TbColorPicker } from "react-icons/tb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaintBrush } from "@fortawesome/free-solid-svg-icons";
 
 function getTextColorForBackground(hexColor: string): string {
   // 去掉 "#" 開頭
@@ -65,16 +66,14 @@ export default function ColorPicker({
           height: `${size}px`,
         }}
       >
-        {/* 中央icon */}
-        {hover && (
-          <TbColorPicker
-            className="pointer-events-none select-none"
-            style={{
-              color: getTextColorForBackground(color),
-              textShadow: "0 0 3px rgba(0,0,0,0.3)",
-            }}
-          />
-        )}
+        <FontAwesomeIcon
+          icon={faPaintBrush}
+          className="pointer-events-none select-none"
+          style={{
+            color: getTextColorForBackground(color),
+            textShadow: "0 0 3px rgba(0,0,0,0.3)",
+          }}
+        />
 
         {/* 右上角的叉叉 */}
         {hover && onDelete && (

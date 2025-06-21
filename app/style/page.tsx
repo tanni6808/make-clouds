@@ -10,7 +10,8 @@ import DownloadFilePanel from "./components/downloadFilePanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 
-import { FaArrowRotateLeft } from "react-icons/fa6";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShuffle } from "@fortawesome/free-solid-svg-icons";
 
 export default function StylePage() {
   const router = useRouter();
@@ -84,7 +85,7 @@ export default function StylePage() {
     <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3 max-md:grid-rows-[auto_auto_auto_1fr]">
       <Button style="hollow" onClick={triggerRegenerate}>
         <div className="flex justify-center items-center">
-          <FaArrowRotateLeft />
+          <FontAwesomeIcon icon={faShuffle} />
           <div className="pl-2">重新隨機排列詞彙</div>
         </div>
       </Button>

@@ -9,8 +9,8 @@ import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 import ColorPicker from "./colorPicker";
 
-import { FaCompressArrowsAlt } from "react-icons/fa";
-import { TbColorPicker } from "react-icons/tb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCompress } from "@fortawesome/free-solid-svg-icons";
 
 export default function Canvas() {
   const pathname = usePathname();
@@ -25,7 +25,7 @@ export default function Canvas() {
   const setDownloadPNG = useCanvasStore((s) => s.setDownloadPNG);
 
   //SEC 控制畫布
-  const [canvasColor, setCanvasColor] = useState<string>("#fff");
+  const [canvasColor, setCanvasColor] = useState<string>("#ffffff");
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
     translateX: 0,
@@ -555,7 +555,7 @@ export default function Canvas() {
         onClick={() => resetCanvasPosition(true)}
       >
         <div className="flex items-center max-md:text-sm">
-          <FaCompressArrowsAlt />
+          <FontAwesomeIcon icon={faCompress} />
           <div className="pl-2">重置畫布縮放</div>
         </div>
       </Button>

@@ -4,6 +4,9 @@ import clsx from "clsx";
 import Button from "@/app/components/button";
 import { useCanvasStore } from "@/app/lib/useCanvasStore";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+
 export default function DownloadFilePanel({
   className,
 }: {
@@ -32,7 +35,10 @@ export default function DownloadFilePanel({
         className="w-full"
         onClick={() => setOpen((s) => !s)}
       >
-        下載檔案
+        <div className="flex justify-center items-center">
+          <FontAwesomeIcon icon={faDownload} />
+          <div className="">下載檔案</div>
+        </div>
       </Button>
       {open && (
         <div className="absolute z-100 top-[-190%] flex flex-col items-stretch w-full bg-white gap-1 rounded outline-2 outline-offset-[-2]">
