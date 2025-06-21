@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 
 import Button from "./button";
-import Link from "next/link";
 
 function IndexHeader() {
   const handleIntro = () => {
@@ -46,8 +45,10 @@ function IndexHeader() {
 }
 
 function SimpleHeader() {
+  const pathname = usePathname();
   const router = useRouter();
   const handleClick = () => {
+    if (pathname === "/about") return router.push("/#header");
     if (confirm("回到首頁將會失去所有編輯進度，是否繼續？"))
       router.push("/#header");
   };
@@ -55,8 +56,8 @@ function SimpleHeader() {
     <header
       className={clsx(
         "h-[60px] bg-white shadow flex flex-col justify-center mb-10 fixed top-0 z-30 left-0 right-0",
-        "md:hidden",
-        "max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500"
+        "md:static md:rounded-b-3xl"
+        // "max-sm:text-red max-md:text-yellow-500 max-lg:text-green-500 max-xl:text-blue-500"
         // NOTE text-color width breaker
         // width < 640(max-sm): red
         // 640 <= width < 768(max-md): yellow
@@ -65,8 +66,13 @@ function SimpleHeader() {
         // 1280 <= width: gray
       )}
     >
-      <div className="w-[90%] mx-auto text-3xl max-sm:text-2xl">
-        <div onClick={handleClick}>製雲</div>
+      <div className="w-[90%] mx-auto text-3xl max-sm:text-2xl flex">
+        <div
+          onClick={handleClick}
+          className="cursor-pointer hover:border-b-4 transition-all"
+        >
+          製雲
+        </div>
       </div>
     </header>
   );

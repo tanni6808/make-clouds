@@ -9,6 +9,7 @@ import SingleEditPanel from "./components/singleEditPanel";
 import DownloadFilePanel from "./components/downloadFilePanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
+import { useScrollToWorkspace } from "../lib/hooks";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShuffle } from "@fortawesome/free-solid-svg-icons";
@@ -76,10 +77,8 @@ export default function StylePage() {
     setSelectedWord(null);
     setCurrentEditTab("global");
   }, []);
-  useEffect(() => {
-    const stepNavEl = document.getElementById("step-nav");
-    stepNavEl?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, []);
+
+  useScrollToWorkspace();
 
   return (
     <div className="grid grid-rows-[auto_auto_1fr_auto] gap-3 max-md:grid-rows-[auto_auto_auto_1fr]">

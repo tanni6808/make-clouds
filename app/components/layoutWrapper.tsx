@@ -15,12 +15,13 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const showSteps = ["/", "/composition", "/style"].includes(pathname);
   const showCanvas = ["/composition", "/style"].includes(pathname);
 
   return (
     <div className="max-w-[1200px] mx-auto max-xl:mx-5 max-md:mx-0">
       <Header />
-      {!showCanvas && <Intro />}
+      {pathname === "/" && <Intro />}
       <Workspace
         className={clsx(
           "relative",
@@ -28,7 +29,7 @@ export default function LayoutWrapper({
           // "max-md:grid max-md:grid-rows-[400px_100px_300px]"
         )}
       >
-        <StepNavigation />
+        {showSteps && <StepNavigation />}
         {showCanvas ? (
           <div className="grid grid-cols-4 gap-8 min-h-[600px] mx-2 md:max-xl:grid-cols-[1fr_1fr_1fr_226px] max-md:grid-cols-[1fr] max-md:mx-10 max-md:min-h-[300px]">
             <div
@@ -43,9 +44,6 @@ export default function LayoutWrapper({
             >
               <Canvas />
             </div>
-            {/* <div className="grid col-start-1 col-end-4">
-              <Canvas />
-            </div> */}
             {children}
           </div>
         ) : (

@@ -9,6 +9,7 @@ import AddCustomWordPanel from "./components/addCustomWordPanel";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 import { generateWordList } from "../lib/wordCloudMethod";
+import { useScrollToWorkspace } from "../lib/hooks";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShuffle } from "@fortawesome/free-solid-svg-icons";
@@ -45,10 +46,7 @@ export default function CompositionPage() {
     setSegmentedWords(result);
   }, [article, customWords, stopwords]);
 
-  useEffect(() => {
-    const stepNavEl = document.getElementById("step-nav");
-    stepNavEl?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, []);
+  useScrollToWorkspace();
 
   return (
     <div className="grid grid-rows-[auto_1fr_100px_100px_auto] gap-3 max-md:grid-rows-[auto_auto_120px_120px]">
