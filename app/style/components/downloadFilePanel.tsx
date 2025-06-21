@@ -5,7 +5,7 @@ import Button from "@/app/components/button";
 import { useCanvasStore } from "@/app/lib/useCanvasStore";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faFileArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 export default function DownloadFilePanel({
   className,
@@ -36,7 +36,7 @@ export default function DownloadFilePanel({
         onClick={() => setOpen((s) => !s)}
       >
         <div className="flex justify-center items-center">
-          <FontAwesomeIcon icon={faDownload} />
+          <FontAwesomeIcon icon={faFileArrowDown} />
           <div className="">下載檔案</div>
         </div>
       </Button>
