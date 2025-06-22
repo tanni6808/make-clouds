@@ -134,10 +134,12 @@ export function generateWordCloud(
     // 設定文字樣式
     ctx.font = `bold ${word.size}px Noto Sans TC`;
 
+    const padding = 2;
+
     const metrics = ctx.measureText(word.text);
     const textWidth = metrics.width;
-    const ascent = metrics.actualBoundingBoxAscent + 2;
-    const descent = metrics.actualBoundingBoxDescent + 2;
+    const ascent = metrics.actualBoundingBoxAscent + padding;
+    const descent = metrics.actualBoundingBoxDescent + padding;
     const textHeight = ascent + descent;
 
     let centerOffsetX = 0;
