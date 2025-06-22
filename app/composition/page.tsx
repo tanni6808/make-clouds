@@ -49,7 +49,7 @@ export default function CompositionPage() {
   useScrollToWorkspace();
 
   return (
-    <div className="grid grid-rows-[auto_1fr_100px_100px_auto] gap-3 max-md:grid-rows-[auto_auto_120px_120px]">
+    <div className="grid grid-rows-[auto_100px_1fr_100px_auto] gap-3 max-md:grid-rows-[auto_auto_120px_1fr_120px]">
       <Button
         style="hollow"
         onClick={triggerRegenerate}
@@ -60,15 +60,15 @@ export default function CompositionPage() {
           <div className="pl-2">重新隨機排列詞彙</div>
         </div>
       </Button>
-      <WordsList className="max-md:row-start-3 max-md:row-end-5" />
       <TotalWordsPanel />
+      <WordsList />
       <AddCustomWordPanel />
       <Button
         style="solid"
         onClick={handleGoNextStep}
         className="max-md:row-start-1"
       >
-        下一步：編輯詞彙樣式
+        下一步
       </Button>
     </div>
   );

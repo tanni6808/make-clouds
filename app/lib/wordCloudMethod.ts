@@ -136,8 +136,8 @@ export function generateWordCloud(
 
     const metrics = ctx.measureText(word.text);
     const textWidth = metrics.width;
-    const ascent = metrics.actualBoundingBoxAscent;
-    const descent = metrics.actualBoundingBoxDescent;
+    const ascent = metrics.actualBoundingBoxAscent + 2;
+    const descent = metrics.actualBoundingBoxDescent + 2;
     const textHeight = ascent + descent;
 
     let centerOffsetX = 0;
@@ -160,7 +160,7 @@ export function generateWordCloud(
       const x = centerX - centerOffsetX + r * Math.cos(a);
       const y = centerY + r * 0.6 * Math.sin(a);
 
-      // 注意這裡是用 baseline 作為 y，rect 要往上移 ascent
+      //　用 baseline 作為 y，rect 要往上移 ascent
       const rect = new DOMRect(x, y - ascent, textWidth, textHeight);
       const overlap = placedRects.some((w) => isOverlap(w, rect));
 

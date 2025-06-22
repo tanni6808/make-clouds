@@ -49,7 +49,7 @@ function SimpleHeader() {
   const router = useRouter();
   const handleClick = () => {
     if (pathname === "/about") return router.push("/#header");
-    if (confirm("回到首頁將會失去所有編輯進度，是否繼續？"))
+    if (confirm("回到首頁將會失去所有編輯進度，確定要離開嗎？"))
       router.push("/#header");
   };
   return (

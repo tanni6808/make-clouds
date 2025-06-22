@@ -23,7 +23,7 @@ export default function AddCustomWordPanel({
       )}
       onSubmit={(e) => handleAddCustomWord(e)}
     >
-      <div className="mb-2 text-center">新增詞彙</div>
+      <div className="mb-2 text-center">訂正詞彙</div>
       <div className="flex items-center gap-3">
         <input
           type="text"
