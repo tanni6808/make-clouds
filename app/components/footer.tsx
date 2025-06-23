@@ -10,9 +10,11 @@ export default function Footer() {
   const router = useRouter();
   const pathname = usePathname();
   const handleClickAbout = () => {
-    if (pathname !== "/")
+    if (pathname !== "/") {
       if (confirm("離開頁面將會失去所有編輯進度，確定要離開嗎？"))
         return router.push("/about");
+    }
+    router.push("/about");
   };
   return (
     <div className="bg-white flex justify-center rounded-t-2xl">
