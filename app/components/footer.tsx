@@ -10,8 +10,9 @@ export default function Footer() {
   const router = useRouter();
   const pathname = usePathname();
   const handleClickAbout = () => {
-    if (confirm("離開頁面將會失去所有編輯進度，確定要離開嗎？"))
-      return router.push("/about");
+    if (pathname !== "/")
+      if (confirm("離開頁面將會失去所有編輯進度，確定要離開嗎？"))
+        return router.push("/about");
   };
   return (
     <div className="bg-white flex justify-center rounded-t-2xl">
@@ -29,7 +30,7 @@ export default function Footer() {
           {pathname === "/about" ? (
             <div className="flex items-center gap-1 border-b-4 text-primary-light">
               <FontAwesomeIcon icon={faCircleInfo} />
-              <div className="">關於本網站</div>
+              <div className="">關於製雲</div>
             </div>
           ) : (
             <div
@@ -37,7 +38,7 @@ export default function Footer() {
               onClick={handleClickAbout}
             >
               <FontAwesomeIcon icon={faCircleInfo} />
-              <div className="">關於本網站</div>
+              <div className="">關於製雲</div>
             </div>
           )}
         </div>

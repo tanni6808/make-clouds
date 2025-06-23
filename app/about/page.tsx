@@ -2,10 +2,10 @@ import Link from "next/link";
 export default function AboutPage() {
   return (
     <div className="min-h-[75vh] px-10 mt-10">
-      <div className="py-10 text-2xl">關於本網站</div>
+      <div className="py-10 text-2xl">關於製雲</div>
       <div className="">
         <div className="flex flex-wrap">
-          <div className="">本網站使用</div>
+          <div className="">製雲使用</div>
           <Link
             href={"https://react.dev/"}
             target="_blank"
