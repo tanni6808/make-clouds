@@ -27,7 +27,7 @@ export default function Footer() {
             target="_blank"
           >
             <FontAwesomeIcon icon={faGithub} />
-            <div className="">Github Repo</div>
+            <div className="">GitHub Repo</div>
           </Link>
           {pathname === "/about" ? (
             <div className="flex items-center gap-1 border-b-4 text-primary-light">
