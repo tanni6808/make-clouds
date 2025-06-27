@@ -11,8 +11,9 @@ export default function Footer() {
   const pathname = usePathname();
   const handleClickAbout = () => {
     if (pathname !== "/") {
-      if (confirm("離開頁面將會失去所有編輯進度，確定要離開嗎？"))
+      if (confirm("離開頁面將會失去所有編輯進度，確定要離開嗎？")) {
         return router.push("/about");
+      } else return;
     }
     router.push("/about");
   };

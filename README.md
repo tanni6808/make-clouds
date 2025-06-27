@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# [製雲](https://make-clouds.vercel.app/)
 
-## Getting Started
+線上製作精美的繁體中文文字雲。
 
-First, run the development server:
+# 主要功能
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. 輸入文章：輸入一篇繁體中文文章後，網站會對它進行斷詞、移除停用詞，並計算詞彙出現的頻率，轉換成文字雲。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Feature 1 - Input Article](/public/readme/feature_1.gif)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. 調整詞彙：您可以訂正未被正確斷詞的詞彙，以及移除不想在文字雲中使用的詞彙。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+![Feature 2-1 - Correct Words](/public/readme/feature_2-1.gif)
 
-## Learn More
+3. 編輯樣式：您可以變更每個詞彙的字型、顏色、或陰影。
 
-To learn more about Next.js, take a look at the following resources:
+![Feature 3-1 - Change Global Font Style](/public/readme/feature_3-1.gif)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![Feature 3-2 - Change Global Color](/public/readme/feature_3-2.gif)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+![Feature 3-3 - Change Global Shadow](/public/readme/feature_3-3.gif)
 
-## Deploy on Vercel
+4. 下載：完成後，您可以將成品以 SVG 或 PNG 檔案的形式下載。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 技術堆疊
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 前端
+
+- 框架：[React](https://react.dev/), [Next.js](https://nextjs.org/)
+- 語言：[TypeScript](https://www.typescriptlang.org/)
+- CSS 框架：[Tailwind CSS](https://tailwindcss.com/)
+- 狀態管理：[Zustand](https://github.com/pmndrs/zustand)
+- 圖示: [Font Awesome](https://fontawesome.com/license/free)
+- 第三方套件/API: [react-color](https://github.com/casesandberg/react-color), [clsx](https://github.com/lukeed/clsx), [nanoid](https://github.com/ai/nanoid), [The color API](https://github.com/joshbeckman/thecolorapi)
+
+## 部屬
+
+- [Vercel](https://vercel.com/)
+
+# 聯絡我
+
+email: [tanni6808450@gmail.com](mailto:tanni6808450@gmail.com)
