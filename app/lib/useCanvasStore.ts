@@ -7,14 +7,17 @@ type CanvasStore = {
   canvasGRef: SVGGElement | null;
   setCanvasGRef: (ref: SVGGElement | null) => void;
 
+  canvasColor: string;
+  setCanvasColor: (color: string) => void;
+
   triggerRegenerate: () => void;
   setTriggerRegenerate: (fn: () => void) => void;
 
-  downloadSVG: () => void;
-  setDownloadSVG: (fn: () => void) => void;
+  downloadSVG: (bgTransIsChecked: boolean) => void;
+  setDownloadSVG: (fn: (bgTransIsChecked: boolean) => void) => void;
 
-  downloadPNG: () => void;
-  setDownloadPNG: (fn: () => void) => void;
+  downloadPNG: (bgTransIsChecked: boolean) => void;
+  setDownloadPNG: (fn: (bgTransIsChecked: boolean) => void) => void;
 };
 
 export const useCanvasStore = create<CanvasStore>((set, get) => ({
@@ -23,6 +26,9 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
 
   canvasGRef: null,
   setCanvasGRef: (ref) => set({ canvasGRef: ref }),
+
+  canvasColor: "#ffffff",
+  setCanvasColor: (color) => set({ canvasColor: color }),
 
   triggerRegenerate: () => {},
   setTriggerRegenerate: (fn) => set({ triggerRegenerate: fn }),

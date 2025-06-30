@@ -20,12 +20,13 @@ export default function Canvas() {
   const setCanvasSVGRef = useCanvasStore((s) => s.setCanvasSVGRef);
   const groupRef = useRef<SVGGElement | null>(null);
   const setCanvasGRef = useCanvasStore((s) => s.setCanvasGRef);
+  const canvasColor = useCanvasStore((s) => s.canvasColor);
+  const setCanvasColor = useCanvasStore((s) => s.setCanvasColor);
   const setTriggerRegenerate = useCanvasStore((s) => s.setTriggerRegenerate);
   const setDownloadSVG = useCanvasStore((s) => s.setDownloadSVG);
   const setDownloadPNG = useCanvasStore((s) => s.setDownloadPNG);
 
   //SEC 控制畫布
-  const [canvasColor, setCanvasColor] = useState<string>("#ffffff");
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [canvasTransform, setCanvasTransform] = useState<Transform>({
     translateX: 0,
@@ -222,21 +223,13 @@ export default function Canvas() {
   useEffect(() => {
     if (pathname !== "/composition") return;
 
-    if (!svgRef.current || !groupRef.current) {
-      console.log("no svg or group ref");
-      return;
-    }
-    console.log("has svg and group ref");
+    if (!svgRef.current || !groupRef.current) return;
     const svgEl = svgRef.current;
     const width = svgEl.clientWidth;
     const height = svgEl.clientHeight;
     const selectedWords = getSelectedWords();
 
-    if (!width || !height || selectedWords.length === 0) {
-      console.log("no place or material to draw");
-      return;
-    }
-    console.log("has place and materials to draw");
+    if (!width || !height || selectedWords.length === 0) return;
 
     const currentDeps = {
       segmentedWords,
@@ -255,11 +248,7 @@ export default function Canvas() {
       );
     })();
 
-    if (hasGeneratedRef.current && !depsChanged) {
-      console.log(`draw once, no change, do not regenerate`);
-      return;
-    }
-    console.log("pass all test, start regenerate");
+    if (hasGeneratedRef.current && !depsChanged) return;
 
     const wordCloudComposition = generateWordCloud(selectedWords, svgEl);
     setComposition(wordCloudComposition);
@@ -285,7 +274,7 @@ export default function Canvas() {
 
   // SEC 下載
   // SVG檔案
-  function downloadSVG() {
+  function downloadSVG(bgTransIsChecked: boolean) {
     const words = useWordCloudStore.getState().composition;
     if (!words || words.length === 0) return;
     const {
@@ -295,6 +284,8 @@ export default function Canvas() {
       globalFontStyle,
       globalTextShadow,
     } = useWordCloudStore.getState();
+
+    const { canvasColor } = useCanvasStore.getState();
 
     const padding = 50;
     const minX = Math.min(...words.map((w) => w.x));
@@ -334,11 +325,14 @@ export default function Canvas() {
         `);
     });
 
+    const bgRect = `<rect width="100%" height="100%" fill="${canvasColor}" />`;
+
     const svgContent = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
       <defs>
         ${filterDefs.join("\n")}
       </defs>
+      ${bgTransIsChecked ? "" : bgRect}
       <g>
         ${words
           .map((word) => {
@@ -379,7 +373,7 @@ export default function Canvas() {
     URL.revokeObjectURL(url);
   }
   // PNG檔案
-  function downloadPNG() {
+  function downloadPNG(bgTransIsChecked: boolean) {
     const words = useWordCloudStore.getState().composition;
     if (!words || words.length === 0) return;
 
@@ -390,6 +384,8 @@ export default function Canvas() {
       globalFontStyle,
       globalTextShadow,
     } = useWordCloudStore.getState();
+
+    const { canvasColor } = useCanvasStore.getState();
 
     const padding = 50;
     const minX = Math.min(...words.map((w) => w.x));
@@ -405,7 +401,11 @@ export default function Canvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "rgb(255 255 255 / 0%)"; // "rgb(255 255 255)";
+    if (bgTransIsChecked) {
+      ctx.fillStyle = "rgb(255 255 255 / 0%)";
+    } else {
+      ctx.fillStyle = canvasColor;
+    }
     ctx.fillRect(0, 0, width, height);
 
     words.forEach((word) => {
@@ -459,6 +459,7 @@ export default function Canvas() {
   useEffect(() => {
     if (pathname === "/composition") {
       useWordCloudStore.getState().resetStyleMaps();
+      useCanvasStore.getState().setCanvasColor("#ffffff");
     }
   }, [pathname]);
 

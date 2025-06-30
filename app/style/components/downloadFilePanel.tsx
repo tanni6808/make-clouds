@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import clsx from "clsx";
 
 import Button from "@/app/components/button";
+import Modal from "@/app/components/modal";
+import Checkbox from "@/app/components/checkbox";
 import { useCanvasStore } from "@/app/lib/useCanvasStore";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,20 +16,9 @@ export default function DownloadFilePanel({
 }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(true);
   const downloadSVG = useCanvasStore((s) => s.downloadSVG);
   const downloadPNG = useCanvasStore((s) => s.downloadPNG);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
   return (
     <div className={clsx("relative", className)} ref={panelRef}>
       <Button
@@ -40,22 +31,32 @@ export default function DownloadFilePanel({
           <div className="pl-2">下載檔案</div>
         </div>
       </Button>
-      {open && (
-        <div className="absolute z-100 top-[-190%] flex flex-col items-stretch w-full bg-white gap-1 rounded outline-2 outline-offset-[-2]">
-          <div
-            className="rounded m-1 hover:bg-gray-light text-center cursor-pointer"
-            onClick={downloadSVG}
-          >
-            SVG
+      <Modal isOpen={open} onClose={() => setOpen(false)}>
+        <div className="p-6 flex flex-col items-center gap-3">
+          <h3 className="text-xl">下載文字雲圖檔</h3>
+          <div className="flex gap-3">
+            <Button
+              style="solid"
+              className="px-8"
+              onClick={() => downloadSVG(isChecked)}
+            >
+              SVG
+            </Button>
+            <Button
+              style="solid"
+              className="px-8"
+              onClick={() => downloadPNG(isChecked)}
+            >
+              PNG
+            </Button>
           </div>
-          <div
-            className="rounded m-1 hover:bg-gray-light text-center cursor-pointer"
-            onClick={downloadPNG}
-          >
-            PNG
-          </div>
+          <Checkbox
+            label="透明背景"
+            isChecked={isChecked}
+            onChange={() => setIsChecked((s) => !s)}
+          />
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

@@ -44,7 +44,7 @@ body {
 }
 
 textarea,
-input {
+input[type="text"] {
   border: none;
   overflow: auto;
   outline: none;
@@ -54,6 +54,15 @@ input {
   box-shadow: none;
 
   resize: none;
+}
+
+input[type="checkbox"]:checked::before {
+  content: "\2714";
+  position: absolute;
+  top: 0px;
+  left: 4px;
+  /* font-size: 1.2rem; */
+  color: white;
 }
 
 text {
