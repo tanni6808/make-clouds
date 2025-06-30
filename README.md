@@ -35,7 +35,9 @@
 
    ![Feature 3-3 - Change Global Shadow](/public/readme/feature_3-3.gif)
 
-4. 下載 - 完成後，您可以將成品以 SVG 或 PNG 檔案的形式下載。
+4. 下載 - 完成後，您可以將成品以 SVG 或 PNG 檔案的形式下載：
+
+  <img src="/public/readme/feature_4.png" alt="Feature 4 - Download SVG or PNG File" width="688">
 
 # 技術堆疊
 
