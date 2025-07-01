@@ -1,6 +1,12 @@
 # [製雲](https://make-clouds.vercel.app/)
 
-線上製作精美的繁體中文文字雲。
+「[製雲](https://make-clouds.vercel.app/)」是一個製作繁體中文文字雲的線上服務。您可以使用製雲將一篇繁體中文的文章轉換成一朵文字雲，依照您的需求調整雲中的詞彙，並編輯詞彙的字型、顏色、以及陰影。
+
+![Make Clouds](./assets/index-wordcloud.png)
+
+製雲採響應式設計(RWD)，可以在各式裝置上使用。
+
+![RWD](./assets/RWD.png)
 
 # 目錄
 
