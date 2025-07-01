@@ -62,7 +62,7 @@
 
 ## 工作區
 
-- 重新隨機產生文字雲（<div style="color: blue;">triggerRegenerate()</div>）
+- 重新隨機產生文字雲（<span style="color:blue">useCanvasStore.triggerRegenerate()</span>）
 - 調整詞彙
   - 調整文字雲中詞彙數量（``）
   - 訂正或移除詞彙（``）
