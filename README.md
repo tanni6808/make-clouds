@@ -58,11 +58,11 @@
 
 ## 核心：Zustand 狀態管理
 
-![State Management With Zustand](../assets/tech-detail_zustand.png)
+![State Management With Zustand](./assets/tech-detail_zustand.png)
 
 ## 工作區
 
-- 重新隨機產生文字雲（<code style="color: blue;">triggerRegenerate()</code>）
+- 重新隨機產生文字雲（<div style="color: blue;">triggerRegenerate()</div>）
 - 調整詞彙
   - 調整文字雲中詞彙數量（``）
   - 訂正或移除詞彙（``）
