@@ -6,7 +6,7 @@
 
 - [主要功能](#主要功能)
 - [技術堆疊](#技術堆疊)
-- [功能細節](#功能細節)
+- [技術及功能細節](#技術及功能細節) -[核心：Zustand 狀態管理](#核心zustand-狀態管理) -[工作區](#工作區) -[畫布](#畫布)
 - [聯絡我](#聯絡我)
 
 # 主要功能
@@ -23,7 +23,7 @@
 
    ![Feature 2-2 - Remove Words](/public/readme/feature_2-2.gif)
 
-3. 編輯樣式 - 您可以變更每個詞彙的字型：
+3. 編輯樣式 - 變更每個詞彙的字型：
 
    ![Feature 3-1 - Change Global Font Style](/public/readme/feature_3-1.gif)
 
@@ -35,7 +35,7 @@
 
    ![Feature 3-3 - Change Global Shadow](/public/readme/feature_3-3.gif)
 
-4. 下載 - 完成後，您可以將成品以 SVG 或 PNG 檔案的形式下載：
+4. 下載 - 完成後，將成品以 SVG 或 PNG 檔案的形式下載：
 
    <img src="/public/readme/feature_4.png" alt="Feature 4 - Download SVG or PNG File" width="688">
 
@@ -54,29 +54,34 @@
 
 - [Vercel](https://vercel.com/)
 
-# 功能細節
+# 技術及功能細節
 
-- 畫布
+## 核心：Zustand 狀態管理
 
-  - 根據滑鼠所在位置縮放
-  - 拖曳移動詞彙
-  - 一鍵重製縮放位置
-  - 改變背景顏色
-  - 與工作區詞彙編輯面板連結
+![State Management With Zustand](./public/readme/tech-detail_zustand.png)
 
-- 工作區
+## 工作區
 
-  - 重新隨機產生文字雲
-  - 調整詞彙
-    - 調整文字雲中詞彙數量
-    - 訂正或移除詞彙
-  - 編輯樣式：整體編輯/個別編輯
-    - 字型
-    - 文字顏色
-      - （在整體編輯中）選擇配色方案
-      - （在整體編輯中）依配色方案重新隨機上色
-      - （在個別編輯中）選擇現有配色方案中的顏色
-    - 文字陰影
+- 重新隨機產生文字雲（<code style="color: blue">triggerRegenerate()</code>）
+- 調整詞彙
+  - 調整文字雲中詞彙數量（``）
+  - 訂正或移除詞彙（``）
+- 編輯樣式：整體編輯
+  - 字型（``）
+  - 文字顏色（``）
+  - 文字陰影（``）
+- 編輯樣式：個別編輯
+  - 字型（``）
+  - 文字顏色（``）
+  - 文字陰影（``）
+
+## 畫布
+
+- 根據滑鼠所在位置縮放（）
+- 拖曳移動詞彙（）
+- 一鍵重置縮放位置（）
+- 改變背景顏色（）
+- 與工作區詞彙編輯面板連結（）
 
 # 聯絡我
 
