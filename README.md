@@ -1,4 +1,4 @@
-# [製雲](https://make-clouds.vercel.app/)
+# [製雲（https://make-clouds.vercel.app/）](https://make-clouds.vercel.app/)
 
 「[製雲](https://make-clouds.vercel.app/)」是一個製作繁體中文文字雲的線上服務。您可以使用製雲將一篇繁體中文的文章轉換成一朵文字雲，依照您的需求調整雲中的詞彙，並編輯詞彙的字型、顏色、以及陰影。
 
@@ -14,6 +14,7 @@
 - [技術堆疊](#技術堆疊)
 - [技術及功能細節](#技術及功能細節)
   - [核心：Zustand 狀態管理](#核心zustand-狀態管理)
+  - [文字雲生成](#文字雲生成)
   - [工作區](#工作區)
   - [畫布](#畫布)
 - [聯絡我](#聯絡我)
@@ -65,6 +66,14 @@
 
 # 技術及功能細節
 
+## 核心：Zustand 狀態管理
+
+![State Management With Zustand](./assets/tech-detail_zustand.png)
+
+- 使用`useWordCloudStore()`管理文字雲的所有狀態，以便在任何路徑或組件中取得
+- 使用`useCanvasStore()`將一些操作畫布的函式暴露給其他組件使用。
+- 針對畫布的 event handler 保留在畫布中，不暴露。
+
 ## 文字雲生成
 
 ![Generate Word Cloud](./assets/tech-detail_generateWordCloud.png)
@@ -81,14 +90,6 @@
    - 沒有重疊 -> 記錄此時的位置，加入已放置的詞彙
    - 有重疊，但已嘗試 1000 次 -> 放棄嘗試，將此詞彙放置於畫布左上角
 4. 輸出文字雲結構 `composition[]`
-
-## 核心：Zustand 狀態管理
-
-![State Management With Zustand](./assets/tech-detail_zustand.png)
-
-- 使用`useWordCloudStore()`管理文字雲的所有狀態，以便在任何路徑或組件中取得
-- 使用`useCanvasStore()`將一些操作畫布的函式暴露給其他組件使用。
-- 針對畫布的 event handler 保留在畫布中，不暴露。
 
 ## 工作區
 
