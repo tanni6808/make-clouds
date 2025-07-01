@@ -50,8 +50,8 @@
 - 語言：[TypeScript](https://www.typescriptlang.org/)
 - CSS 框架：[Tailwind CSS](https://tailwindcss.com/)
 - 狀態管理：[Zustand](https://github.com/pmndrs/zustand)
-- 圖示: [Font Awesome](https://fontawesome.com/license/free)
-- 第三方套件/API: [react-color](https://github.com/casesandberg/react-color), [clsx](https://github.com/lukeed/clsx), [nanoid](https://github.com/ai/nanoid), [The color API](https://github.com/joshbeckman/thecolorapi)
+- 圖示：[Font Awesome](https://fontawesome.com/license/free)
+- 第三方套件/API：[react-color](https://github.com/casesandberg/react-color), [clsx](https://github.com/lukeed/clsx), [nanoid](https://github.com/ai/nanoid), [The color API](https://github.com/joshbeckman/thecolorapi)
 
 部屬
 
@@ -86,9 +86,9 @@
 
 ## 工作區
 
-- 重新隨機產生文字雲（🟦`useCanvasStore.triggerRegenerate()`）
+- 重新隨機產生文字雲（`🟦useCanvasStore.triggerRegenerate()`）
 - 調整詞彙
-  - 調整文字雲中詞彙數量（🟩`useWordCloudStore.selectionCount`）
+  - 調整文字雲中詞彙數量（`🟩useWordCloudStore.selectionCount`）
   - 訂正詞彙（`🟨useWordCloudStore.customWords[]`）
   - 移除詞彙（`🟨useWordCloudStore.removedWords[]`）
 - 編輯樣式：整體編輯
