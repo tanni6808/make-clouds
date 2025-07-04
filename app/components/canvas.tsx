@@ -43,6 +43,12 @@ export default function Canvas() {
     offsetY: 0,
   });
   const [isPanning, setIsPanning] = useState(false);
+  const mouseDown = useRef<{ x: number; y: number; time: number }>({
+    x: 0,
+    y: 0,
+    time: 0,
+  });
+  Date.now();
   const panStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   function resetCanvasPosition(animation = true) {
@@ -89,18 +95,23 @@ export default function Canvas() {
     requestAnimationFrame(frame);
   }
 
-  function getMousePosition(event: React.MouseEvent | MouseEvent) {
+  function getMousePosition(e: React.MouseEvent | MouseEvent) {
     const CTM = groupRef.current!.getScreenCTM();
     if (!CTM) return { x: 0, y: 0 };
-    const mouseX = (event.clientX - CTM.e) / CTM.a;
-    const mouseY = (event.clientY - CTM.f) / CTM.d;
+    const mouseX = (e.clientX - CTM.e) / CTM.a;
+    const mouseY = (e.clientY - CTM.f) / CTM.d;
     return { x: mouseX, y: mouseY };
   }
   const handleTextMouseDown = (
-    event: React.MouseEvent<SVGTextElement>,
+    e: React.MouseEvent<SVGTextElement>,
     index: number
   ) => {
-    const mousePosition = getMousePosition(event);
+    const mousePosition = getMousePosition(e);
+    mouseDown.current = {
+      x: mousePosition.x,
+      y: mousePosition.y,
+      time: Date.now(),
+    };
 
     const word = composition[index];
     setDragState({
@@ -534,13 +545,21 @@ export default function Canvas() {
                   handleTextMouseDown(e, index);
                 }}
                 className={`${
-                  dragState.index ? "cursor-grabbing" : "cursor-grab"
+                  dragState.index === null ? "cursor-grab" : "cursor-grabbing"
                 }`}
                 onMouseEnter={() => setHoverIndex(index)}
                 onMouseLeave={() => setHoverIndex(null)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedWord(word.text);
+                  const mousePos = getMousePosition(e);
+                  const down = mouseDown.current;
+                  const dx = mousePos.x - down.x;
+                  const dy = mousePos.y - down.y;
+                  const dt = Date.now() - down.time;
+                  const distance = Math.sqrt(dx * dx + dy * dy);
+                  const isClick = distance < 5 && dt < 300;
+                  if (isClick) setSelectedWord(word.text);
+                  else return;
                 }}
               >
                 {word.text}
