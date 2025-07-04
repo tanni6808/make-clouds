@@ -93,7 +93,6 @@ function calcFontSize(
   return drawWords;
 }
 
-// 判斷current text是否與已繪製的texts有overlap
 function isOverlap(a: DOMRect, b: DOMRect) {
   return !(
     a.x + a.width < b.x ||
@@ -106,12 +105,9 @@ function isOverlap(a: DOMRect, b: DOMRect) {
 export function generateWordCloud(
   wordList: SegmentedWord[],
   svgEl: SVGSVGElement
-  // groupEl: SVGGElement
 ): WordComposition[] {
   const drawWords = calcFontSize(wordList);
   const svg = svgEl;
-  // const group = groupEl;
-  // group.innerHTML = "";
   const xmlns = "http://www.w3.org/2000/svg";
   const { width, height } = svg.getBoundingClientRect();
   const centerX = width / 2;

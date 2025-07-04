@@ -114,7 +114,12 @@ export default function Canvas() {
     const isMiddleClick = e.button === 1;
     const isLeftClick = e.button === 0;
 
-    if (isMiddleClick || (isLeftClick && e.target instanceof SVGSVGElement)) {
+    if (
+      isMiddleClick ||
+      (isLeftClick &&
+        (e.target instanceof SVGSVGElement ||
+          e.target instanceof SVGRectElement))
+    ) {
       e.preventDefault();
       setIsPanning(true);
       panStart.current = { x: e.clientX, y: e.clientY };
@@ -122,10 +127,10 @@ export default function Canvas() {
     }
   };
 
-  const handleMouseMove = (event: React.MouseEvent<SVGSVGElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
     if (dragState.index !== null) {
-      event.preventDefault();
-      const mousePosition = getMousePosition(event);
+      e.preventDefault();
+      const mousePosition = getMousePosition(e);
       const newX = mousePosition.x - dragState.offsetX;
       const newY = mousePosition.y - dragState.offsetY;
 
@@ -136,8 +141,8 @@ export default function Canvas() {
       setComposition(updated);
     }
     if (isPanning) {
-      const dx = event.clientX - panStart.current.x;
-      const dy = event.clientY - panStart.current.y;
+      const dx = e.clientX - panStart.current.x;
+      const dy = e.clientY - panStart.current.y;
 
       setCanvasTransform((prev) => ({
         ...prev,
@@ -145,7 +150,7 @@ export default function Canvas() {
         translateY: prev.translateY + dy,
       }));
 
-      panStart.current = { x: event.clientX, y: event.clientY };
+      panStart.current = { x: e.clientX, y: e.clientY };
     }
   };
 
