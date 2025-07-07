@@ -17,8 +17,8 @@ function processCustomKeywords(
 
       if (!matches) {
         keywords.splice(i);
-        return alert(
-          `找不到${keyword}。請檢查是否有重疊或簡短的自訂詞造成衝突。建議刪除可能有問題的詞，或直接清除所有自訂詞後再試一次。`
+        throw new Error(
+          `找不到「${keyword}」。請檢查是否有重疊或簡短的自訂詞造成衝突。建議刪除可能有問題的詞，或直接清除所有自訂詞後再試一次。`
         );
       }
       result.push({ text: keyword, count: matches.length, isCustom: true });
@@ -67,8 +67,7 @@ export function generateWordList(
     );
     return result;
   } catch (err) {
-    alert(err instanceof Error ? err.message : "切割詞彙時發生錯誤。");
-    return [];
+    throw err;
   }
 }
 

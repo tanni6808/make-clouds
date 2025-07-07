@@ -3,11 +3,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import Button from "./components/button";
+import { useAlert } from "./contexts/alertContext";
 import { useWordCloudStore } from "./lib/useWordCloudStore";
 
 export default function Home() {
   const router = useRouter();
   const { article, setArticle } = useWordCloudStore();
+  const { showAlert } = useAlert();
   const handleLoadExample = () => {
     if (article !== "") return setArticle("");
     fetch("/texts/word-cloud.txt")
@@ -16,7 +18,8 @@ export default function Home() {
   };
   const handleSubmitArticle = (e: React.FormEvent) => {
     e.preventDefault();
-    if (article === "") return alert("請輸入文章，或載入範例文章後再開始。");
+    if (article === "")
+      return showAlert("請輸入文章，或載入範例文章後再開始。");
     router.push("/composition");
   };
   // 重置文字雲相關設定

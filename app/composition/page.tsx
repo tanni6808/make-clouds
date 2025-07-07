@@ -6,6 +6,7 @@ import Button from "../components/button";
 import WordsList from "./components/wordsList";
 import TotalWordsPanel from "./components/totalWordsPanel";
 import AddCustomWordPanel from "./components/addCustomWordPanel";
+import { useAlert } from "../contexts/alertContext";
 import { useWordCloudStore } from "../lib/useWordCloudStore";
 import { useCanvasStore } from "../lib/useCanvasStore";
 import { generateWordList } from "../lib/wordCloudMethod";
@@ -15,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShuffle } from "@fortawesome/free-solid-svg-icons";
 
 export default function CompositionPage() {
+  const { showAlert } = useAlert();
   const { article, customWords, setSegmentedWords } = useWordCloudStore();
   const [stopwords, setStopwords] = useState<Set<string>>(new Set());
   const router = useRouter();
@@ -42,8 +44,12 @@ export default function CompositionPage() {
   useEffect(() => {
     if (article === "") return router.push("/");
     if (stopwords.size === 0) return;
-    const result = generateWordList(customWords, article, stopwords);
-    setSegmentedWords(result);
+    try {
+      const result = generateWordList(customWords, article, stopwords);
+      setSegmentedWords(result);
+    } catch (err: any) {
+      showAlert(err.message);
+    }
   }, [article, customWords, stopwords]);
 
   useScrollToWorkspace();

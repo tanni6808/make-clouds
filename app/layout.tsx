@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_TC } from "next/font/google";
 import "./globals.css";
 import LayoutWrapper from "./components/layoutWrapper";
+import { AlertProvider } from "./contexts/alertContext";
 
 const notoSansTC = Noto_Sans_TC({
   weight: "700",
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant">
       <body className={`${notoSansTC.className} antialiased`}>
-        <LayoutWrapper>{children}</LayoutWrapper>
+        <AlertProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </AlertProvider>
       </body>
     </html>
   );

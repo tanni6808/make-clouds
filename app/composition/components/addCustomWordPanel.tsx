@@ -1,6 +1,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 
+import { useAlert } from "@/app/contexts/alertContext";
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 export default function AddCustomWordPanel({
@@ -9,10 +10,17 @@ export default function AddCustomWordPanel({
   className?: string;
 }) {
   const [customWord, setCustomWord] = useState<string>("");
+  const { showAlert } = useAlert();
   const { addCustomWord } = useWordCloudStore();
   const handleAddCustomWord = (e: React.FormEvent) => {
     e.preventDefault();
-    addCustomWord(customWord);
+    try {
+      if (customWord === "") return;
+      addCustomWord(customWord);
+    } catch (err: any) {
+      showAlert(err.message);
+    }
+
     setCustomWord("");
   };
   return (

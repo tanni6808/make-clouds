@@ -81,8 +81,10 @@ export const useWordCloudStore = create<WordCloudState>((set, get) => ({
   customWords: [],
   addCustomWord: (word) => {
     const existing = get().segmentedWords;
-    if (existing.find((w) => w.text === word))
-      return alert(`「${word}」已經在詞彙庫中`);
+    if (existing.find((w) => w.text === word)) {
+      throw new Error(`「${word}」已經在詞彙庫中`);
+    }
+
     set({
       customWords: [...get().customWords, word],
     });
