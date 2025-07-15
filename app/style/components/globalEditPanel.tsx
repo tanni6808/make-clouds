@@ -14,7 +14,7 @@ import ColorPicker, { ColorAndAlphaPicker } from "@/app/components/colorPicker";
 import { FontDropdown } from "@/app/components/dropdown";
 import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function GlobalEditPanel() {
   // font panel
@@ -147,18 +147,30 @@ export default function GlobalEditPanel() {
   // 陰影
   const globalTextShadow = useWordCloudStore((s) => s.globalTextShadow);
   const setGlobalTextShadow = useWordCloudStore((s) => s.setGlobalTextShadow);
-  const handleShadowX = (dx: number) => {
-    setGlobalTextShadow({ dx: dx });
-  };
-  const handleShadowY = (dy: number) => {
-    setGlobalTextShadow({ dy: dy });
-  };
-  const handleShadowBlur = (blur: number) => {
-    setGlobalTextShadow({ blur: blur });
-  };
-  const handleShadowRGBA = (color: RGBAColor) => {
-    setGlobalTextShadow({ rgba: color });
-  };
+  const handleShadowX = useCallback(
+    (dx: number) => {
+      setGlobalTextShadow({ dx: dx });
+    },
+    [globalTextShadow.dx]
+  );
+  const handleShadowY = useCallback(
+    (dy: number) => {
+      setGlobalTextShadow({ dy: dy });
+    },
+    [globalTextShadow.dy]
+  );
+  const handleShadowBlur = useCallback(
+    (blur: number) => {
+      setGlobalTextShadow({ blur: blur });
+    },
+    [globalTextShadow.blur]
+  );
+  const handleShadowRGBA = useCallback(
+    (color: RGBAColor) => {
+      setGlobalTextShadow({ rgba: color });
+    },
+    [globalTextShadow.rgba]
+  );
 
   return (
     <div className="grid grid-rows-[auto_1fr] gap-3">

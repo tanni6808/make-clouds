@@ -1,4 +1,6 @@
-export default function Counter({
+import { memo } from "react";
+
+export default memo(function Counter({
   value,
   max,
   min,
@@ -38,4 +40,4 @@ export default function Counter({
       </button>
     </div>
   );
-}
+});

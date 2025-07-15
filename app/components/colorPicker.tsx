@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 
 import { RGBAColor } from "../lib/definitions";
 import { ChromePicker } from "react-color";
@@ -113,7 +113,7 @@ export default function ColorPicker({
   );
 }
 
-export function ColorAndAlphaPicker({
+export const ColorAndAlphaPicker = memo(function ColorAndAlphaPicker({
   rgba,
   onChange,
   width = 76,
@@ -178,4 +178,4 @@ export function ColorAndAlphaPicker({
       )}
     </div>
   );
-}
+});
