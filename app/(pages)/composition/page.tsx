@@ -2,15 +2,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Button from "../components/button";
+import Button from "@/app/components/button";
 import WordsList from "./components/wordsList";
 import TotalWordsPanel from "./components/totalWordsPanel";
 import AddCustomWordPanel from "./components/addCustomWordPanel";
-import { useAlert } from "../contexts/alertContext";
-import { useWordCloudStore } from "../lib/useWordCloudStore";
-import { useCanvasStore } from "../lib/useCanvasStore";
-import { generateWordList } from "../lib/wordCloudMethod";
-import { useScrollToWorkspace } from "../lib/hooks";
+import { useAlert } from "@/app/contexts/alertContext";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
+import { useCanvasStore } from "@/app/lib/useCanvasStore";
+import { generateWordList } from "@/app/lib/wordCloudMethod";
+import { useScrollToWorkspace } from "@/app/lib/hooks";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShuffle } from "@fortawesome/free-solid-svg-icons";

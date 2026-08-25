@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_TC } from "next/font/google";
-import "./globals.css";
-import LayoutWrapper from "./components/layoutWrapper";
-import { AlertProvider } from "./contexts/alertContext";
+import "@/app/globals.css";
+import LayoutWrapper from "../components/layoutWrapper";
+import { AlertProvider } from "../contexts/alertContext";
 
 const notoSansTC = Noto_Sans_TC({
   weight: "700",
