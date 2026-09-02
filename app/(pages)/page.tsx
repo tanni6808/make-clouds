@@ -2,9 +2,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import Button from "./components/button";
-import { useAlert } from "./contexts/alertContext";
-import { useWordCloudStore } from "./lib/useWordCloudStore";
+import Button from "@/app/components/button";
+import { useAlert } from "@/app/contexts/alertContext";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
 
 export default function Home() {
   const router = useRouter();

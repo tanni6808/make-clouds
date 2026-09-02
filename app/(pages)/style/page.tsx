@@ -2,14 +2,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import Button from "../components/button";
-import TabSwitcher from "../components/tabSwitcher";
+import Button from "@/app/components/button";
+import TabSwitcher from "@/app/components/tabSwitcher";
 import GlobalEditPanel from "./components/globalEditPanel";
 import SingleEditPanel from "./components/singleEditPanel";
 import DownloadFilePanel from "./components/downloadFilePanel";
-import { useWordCloudStore } from "../lib/useWordCloudStore";
-import { useCanvasStore } from "../lib/useCanvasStore";
-import { useScrollToWorkspace } from "../lib/hooks";
+import { useWordCloudStore } from "@/app/lib/useWordCloudStore";
+import { useCanvasStore } from "@/app/lib/useCanvasStore";
+import { useScrollToWorkspace } from "@/app/lib/hooks";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShuffle } from "@fortawesome/free-solid-svg-icons";
