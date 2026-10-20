@@ -1,16 +1,22 @@
+/**
+ * TODO
+ * 用 button component 取代原生 button
+ */
+interface Props {
+  value: number
+  max: number
+  min: number
+  onChange: (count: number) => void
+  width: number
+}
+
 export default function Counter({
   value,
   max,
   min,
   onChange,
   width = 56,
-}: {
-  value: number;
-  max: number;
-  min: number;
-  onChange: (count: number) => void;
-  width?: number;
-}) {
+}: Readonly<Props>) {
   const handleClick = (delta: number) => {
     const next = value + delta;
     if (next >= min && next <= max) {
