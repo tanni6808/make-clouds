@@ -1,16 +1,26 @@
 import clsx from "clsx";
+/**
+ * TODO: tab 加一個 disable 狀態 
+ */
+interface Tab {
+  label: string
+  value: string
+}
+
+interface Props {
+  tabs: Tab[]
+  current: string
+  onChange: (value: string) => void
+  className: string
+}
 
 export default function TabSwitcher({
   tabs,
   current,
   onChange,
   className,
-}: {
-  tabs: { label: string; value: string }[];
-  current: string;
-  onChange: (value: string) => void;
-  className?: string;
-}) {
+}: Readonly<Props>)
+{
   return (
     <div className="text-center flex bg-gray-md rounded-md justify-center gap-2">
       {tabs.map((tab) => (

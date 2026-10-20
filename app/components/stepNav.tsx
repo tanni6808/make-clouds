@@ -1,7 +1,10 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-
+/**
+ * Molecule
+ * TODO: Step 換成 TabSwitcher
+ */
 function Step({
   label,
   active,
@@ -61,37 +64,3 @@ export default function StepNavigation() {
     </div>
   );
 }
-
-// <div className="flex mb-10">
-//   <div
-//     onClick={pathname === "/" ? undefined : (e) => handleClick(e)}
-//     className={`${
-//       pathname === "/"
-//         ? "border-t-[16px]"
-//         : "border-t-[12px] text-gray-dark"
-//     } w-1/3 text-center mx-2`}
-//   >
-//     輸入文章
-//   </div>
-//   <div
-//     onClick={
-//       pathname === "/composition" ? undefined : (e) => handleClick(e)
-//     }
-//     className={`${
-//       pathname === "/composition"
-//         ? "border-t-[16px]"
-//         : "border-t-[12px] text-gray-dark"
-//     } w-1/3 text-center mx-2`}
-//   >
-//     調整詞彙
-//   </div>
-//   <div
-//     className={`${
-//       pathname === "/style"
-//         ? "border-t-[16px]"
-//         : "border-t-[12px] text-gray-dark"
-//     } w-1/3 text-center mx-2`}
-//   >
-//     編輯詞彙樣式
-//   </div>
-// </div>
